@@ -6,5 +6,7 @@ Install the following Python libraries...
 
 ## User Interaction Guide
 
-## Author
-Lucas Nelson
+### Project Details
+Author: Lucas Nelson
+Date Uploaded: 2021/07/14
+Date Finished: 2021/07/xx
