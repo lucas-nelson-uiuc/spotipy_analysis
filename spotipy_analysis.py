@@ -34,28 +34,9 @@ st.write("""Welcome to `spotipy_analysis`, the application you run when you don'
 st.sidebar.header('Client Information')
 
 
-client_id = st.sidebar.text_input('Client ID', '3369a177760443e1ba8fdc24ffe8ee3a')
-client_secret = st.sidebar.text_input('Client secret', '26557253d83447879b0ff7251d291517')
-playlist_input = st.sidebar.text_area('Playlist URL(s)', """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
-    https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
-    https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
-    https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
-    https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
-    https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
-    https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
-    https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
-    https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
-    https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
-    https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
-    https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
-    https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
-    https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
-    https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
-    https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
-    https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
-    https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
-    https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
-""")
+client_id = st.sidebar.text_input('Client ID', '')
+client_secret = st.sidebar.text_input('Client secret', '')
+playlist_input = st.sidebar.text_area('Playlist URL(s)', '')
 
 # FUNCTIONS defined
 def retrieve_dataframe():
