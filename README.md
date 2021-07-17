@@ -6,10 +6,11 @@ Below you'll find a [`Getting Started`](#Getting-Started) tab and [`User Interac
 ## Getting Started
 Before jumping into learning more about your music tastes, you must follow these steps:
 
-- Ensure you're connected to the internet
 - Create a [Spotify Developer account](https://developer.spotify.com/dashboard/login) using your Spotify login information
-- Select `CREATE AN APP` - `name` and `description` do no matter; when finished, press `CREATE`
-- Locate your unique `Client ID` and `Client Secret`; these two values will be used to access Spotify's API
+- Select `CREATE AN APP` (enter any `name` and `description`)
+- Press `CREATE`
+- Locate `Client ID` and `Client Secret
+- Copy to `Client ID` and `Client Secret` into application
 
 Aside from collecting the playlist(s) you'd like to generate an analysis for, you're good to go! Continue reading to the `User Interaction Guide` if you'd like to learn more about how to interact with the application.
 
