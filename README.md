@@ -17,14 +17,14 @@ Aside from collecting the playlist(s) you'd like to generate an analysis for, yo
 User Interaction is limited to expandable boxes scattered throughout the application. Look for boxes with a plus at the right end as you navigate the dashboard to enter various input.
 
 ### Enter Spotify Details
-`Client ID`: unique identifier of your application
-
+`Client ID`: unique identifier of your application<br>
 `Client Secret`: key to pass in secure calls to the Spotify Accounts and Web API services<br>
-
 `Playlist URL(s)`: link(s) to public Spotify playlists; if multiple, separate links by commas
 
 ### Resources
-[`Getting Started`](#Getting-Started)
+Although you just read them, if you ever need help while using the application, there are links that you can use to redirect yourself back here.<br>
+[`Getting Started`](#Getting-Started)<br>
+[`User Interaction`](#User-Interaction-Guide)
 
 ### Feedback
 
