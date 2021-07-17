@@ -22,7 +22,7 @@ User Interaction is limited to expandable boxes scattered throughout the applica
 `Playlist URL(s)`: link(s) to public Spotify playlists; if multiple, separate links by commas
 
 ### Resources
-Although you just read them, if you ever need help while using the application, there are links that you can use to redirect yourself back here.<br>
+Although you just read them, if you ever need help while using the application, there are links that you can use to redirect yourself here.<br>
 [`Getting Started`](#Getting-Started)<br>
 [`User Interaction`](#User-Interaction-Guide)
 
