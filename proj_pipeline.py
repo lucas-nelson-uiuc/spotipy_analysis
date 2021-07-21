@@ -78,6 +78,8 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 					track_genre = 'alternative'
 				elif 'pop' in track_genre:
 					track_genre = 'pop'
+				elif 'classical' in track_genre:
+					track_genre = 'classical'
 				else:
 					track_genre = artist_genres[0]
 

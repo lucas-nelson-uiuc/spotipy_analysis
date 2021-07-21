@@ -320,6 +320,9 @@ def analysis_attribute_trends(df):
             test_df[col] = test_df[col] * 100
     return test_df.groupby('user_date').agg('mean')
 
+def analysis_attribute_pctchange(df):
+    return analysis_attribute_trends(df).pct_change() * 100
+
 def analysis_user_trends(df):
     test_df = df.copy()
     test_df = test_df[['user_date', 'user_time']]

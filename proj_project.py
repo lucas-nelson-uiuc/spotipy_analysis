@@ -68,11 +68,7 @@ with st.beta_container():
     with st.sidebar.beta_expander('Resources', False):
         st.write("[Getting Started](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py)")
         st.write("[Interaction Guide](https://share.streamlit.io/mesmith027/streamlit_webapps/main/MC_pi/streamlit_app.py)")
-
-    with st.sidebar.beta_expander('Feedback', False):
-        if st.slider("How much did you enjoy using this dashboard?", min_value=0, max_value=10, value=0, step=1) != 0:
-            if st.selectbox("Did you experience any bugs?", options=['<select>', 'Yes', 'No']) != '<select>':
-                st.write("Thank you for reporting!")
+        st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
 
 
 st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
@@ -196,6 +192,20 @@ if ready_button:
             data1 = cols1[0].dataframe(proj_analysis.analysis_song_decades(f_data))
             plot1 = cols1[1].pyplot(proj_plot.proj_plot_hist(f_data, 'duration'))
 
+            cols9 = st.beta_columns((4,6))
+            titl9 = cols9[0].header('Over the Decades: Song Duration')
+            dsec9 = cols9[0].markdown(
+                """
+                Are you more likely to listen to many shorter songs or listen to few longer songs? Whether you prefer the upbeat tempo
+                of shorter songs or the swelling storyline of longer songs, understanding the distribution of the length of your music could explain
+                the specific attributes of the music you listen to as well as your attention span.
+
+                This visualization displays how the length of the music you listen to has changed per decade. Given enough data points, most trends
+                follow a positive skew, meaning there is a disproportionate amount of outliers on the right tail compared to the rest of the distribution.
+                """)
+            data9 = cols9[0].dataframe(proj_analysis.analysis_song_decades(f_data))
+            plot9 = cols9[1].pyplot(proj_plot.proj_plot_hist(f_data, 'tempo'))
+
             cols2 = st.beta_columns((4,6))
             titl2 = cols2[0].header('User Input: Annual Additions')
             desc2 = cols2[0].markdown(
@@ -232,7 +242,10 @@ if ready_button:
                 display a lack of change.
                 """)
             data4 = cols4[0].dataframe(proj_analysis.analysis_attribute_trends(f_data))
-            plot4 = cols4[1].pyplot(proj_plot.proj_plot_attribute(f_data))
+            plot4 = cols4[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'mean'))
+
+            datax = cols4[0].dataframe(proj_analysis.analysis_attribute_pctchange(f_data))
+            plotx = cols4[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change'))
 
             cols5 = st.beta_columns((4,6))
             titl5 = cols5[0].header('Statistics Breakdown: Genre Trends')

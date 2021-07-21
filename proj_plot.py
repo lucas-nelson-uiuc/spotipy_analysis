@@ -15,11 +15,21 @@ def proj_plot_hist(df, col):
 
     if col == 'duration':
         df[col] = df[col] / 60000
-        df['artist_five_year'] = df['artist_date'].apply(proj_analysis.analysis_transform_year)
-        hue_order = sort_hue_order(df['artist_five_year'])
+        df['decade'] = df['artist_date'].apply(proj_analysis.analysis_transform_year)
+        hue_order = sort_hue_order(df['decade'])
         plt.style.use('seaborn-white')
         return sns.displot(df, x=col,
-                            hue='artist_five_year',
+                            hue='decade',
+                            hue_order=hue_order,
+                            kind='hist',
+                            multiple='stack',
+                            palette='Paired').set(xlabel='Duration (min)',
+                            ylabel='# of Songs')
+
+    if col == 'artist':
+        plt.style.use('seaborn-white')
+        return sns.displot(df, x=col,
+                            hue='decade',
                             hue_order=hue_order,
                             kind='hist',
                             multiple='stack',
@@ -31,6 +41,16 @@ def proj_plot_hist(df, col):
         return sns.displot(data=test_df, x='user_date', kind='ecdf', hue='genre', palette='gist_ncar', stat='count'
                     ).set(xlabel='Year-Month', ylabel='# of Songs').set_xticklabels(rotation=45)
 
+    if col == 'tempo':
+        test_df = df[df['genre'] != 'NA'].groupby('genre').filter(lambda x : len(x) > 10).reset_index()
+        plt.style.use('seaborn-white')
+        return sns.displot(test_df, x=col,
+                            hue='genre',
+                            kind='hist',
+                            multiple='stack',
+                            palette='coolwarm').set(xlabel='Tempo (bpm)',
+                            ylabel='# of Songs')
+
 def proj_plot_factor(df):
     result = proj_analysis.analysis_cat_df(df)
     plot_df = result.reset_index().melt(id_vars='user_date', value_vars=['songs','artists','albums']).set_index('user_date').sort_index()
@@ -38,21 +58,38 @@ def proj_plot_factor(df):
     return sns.catplot(data=plot_df, x='user_date', y='value', hue='variable', kind='bar', palette='Paired'
                     ).set(xlabel='Year', ylabel='# of Songs')
     
-def proj_plot_attribute(df):
-    test_df = proj_analysis.analysis_attribute_trends(df)
-    plot_df = test_df.copy()
-    plot_df = plot_df.reset_index().melt(id_vars=['user_date'],
-                            value_vars=['popularity',
-                                    'danceability',
-                                    'energy',
-                                    'loudness',
-                                    'speechiness',
-                                    'acousticness',
-                                    'instrumentalness',
-                                    'liveness',
-                                    'valence']).set_index('user_date').sort_index().reset_index()
-    return sns.catplot(data=plot_df, x='user_date', y='value', hue='variable', kind='point', palette='Paired'
-                    ).set(xlabel='Year', ylabel='Attribute Score')
+def proj_plot_attribute(df, method):
+    if method == 'mean':
+        test_df = proj_analysis.analysis_attribute_trends(df)
+        plot_df = test_df.copy()
+        plot_df = plot_df.reset_index().melt(id_vars=['user_date'],
+                                value_vars=['popularity',
+                                        'danceability',
+                                        'energy',
+                                        'loudness',
+                                        'speechiness',
+                                        'acousticness',
+                                        'instrumentalness',
+                                        'liveness',
+                                        'valence']).set_index('user_date').sort_index().reset_index()
+        return sns.catplot(data=plot_df, x='user_date', y='value', hue='variable', kind='point', palette='Paired'
+                        ).set(xlabel='Year', ylabel='Attribute Score')
+
+    if method == 'pct_change':
+        test_df = proj_analysis.analysis_attribute_pctchange(df)
+        plot_df = test_df.copy()
+        plot_df = plot_df.reset_index().melt(id_vars=['user_date'],
+                                value_vars=['popularity',
+                                        'danceability',
+                                        'energy',
+                                        'loudness',
+                                        'speechiness',
+                                        'acousticness',
+                                        'instrumentalness',
+                                        'liveness',
+                                        'valence']).set_index('user_date').sort_index().reset_index()
+        return sns.catplot(data=plot_df, x='user_date', y='value', hue='variable', kind='bar', palette='Paired'
+                        ).set(xlabel='Year', ylabel='Percent Change (%)')
 
 def plot_user_datetime(df):
     plot_dfdf = proj_analysis.analysis_user_trends(df)
