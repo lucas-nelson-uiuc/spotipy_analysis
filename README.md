@@ -30,6 +30,9 @@ Although you just read them, if you ever need help while using the application, 
 ### Feedback
 
 
+### Other
+For more listening-related statistics, visit this other cool project: [Stats for Spotify](https://www.statsforspotify.com/)
+
 ### Project Details
 Author: Lucas Nelson <br>
 Completed: 2021/07/xx
