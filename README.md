@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://i.imgur.com/7adsRVL.png" alt="Spotify Analysis Logo"></a>
+ <img src="https://i.imgur.com/m1JzxX8.jpg" alt="Spotify Analysis Logo"></a>
 </p>
 
 <h3 align="center">Spotify Analysis Dashbaord</h3>
@@ -8,8 +8,8 @@
 
   [![Tweet](https://img.shields.io/twitter/url/https/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=%F0%9F%93%A2%20Various%20README%20templates%20and%20tips%20on%20writing%20high-quality%20documentation%20that%20people%20want%20to%20read.&url=https://github.com/lucas-nelson-uiuc/academia_epidemia/edit/main/spotipy_analysis)
   [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-  [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/lucas-nelson-uiuc/academia_epidemia/edit/main/spotipy_analysis/issues)
-  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/lucas-nelson-uiuc/academia_epidemia/edit/main/spotipy_analysis/pulls)
+  [![GitHub Issues](https://img.shields.io/github/issues/lucas-nelson-uiuc/academia_epidemia)](https://github.com/lucas-nelson-uiuc/academia_epidemia/edit/main/spotipy_analysis/issues)
+  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/lucas-nelson-uiuc/academia_epidemia)](https://github.com/lucas-nelson-uiuc/academia_epidemia/edit/main/spotipy_analysis/pulls)
 
 </div>
 
