@@ -20,9 +20,13 @@
 
 ## Table of Contents
 
+- [Introduction](#intro_section)
 - [Getting Started](#start_section)
 - [How to Interact with App](#interact_section)
 
+
+## Introduction <a name = "intro_section"></a>
+Welcome to `spotify_analysis`, the dashboard that allows you to analyze your Spotify listening habits of the past and present.
 
 ## Getting Started <a name = "start_section"></a>
 
