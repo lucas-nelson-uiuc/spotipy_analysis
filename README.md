@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Green.png" alt="Spotify Analysis Logo"></a>
+ <img src="https://i.imgur.com/7adsRVL.png" alt="Spotify Analysis Logo"></a>
 </p>
 
 <h3 align="center">Spotify Analysis Dashbaord</h3>
