@@ -59,9 +59,4 @@ For more listening-related statistics, visit this other cool project: [Stats for
 
 ## Project Details
 Author: Lucas Nelson <br>
-Completed: 2021/07/xx
-
-## P.S. <a name = "ps"></a>
-
-- This repo is under active development. If you have any improvements / suggestions please file an [issue](https://github.com/kylelobo/The-Documentation-Compendium/issues/new/choose) or send in a [Pull Request](/en/CONTRIBUTING.md)
-- The [issues](https://github.com/kylelobo/The-Documentation-Compendium/issues) page is a good place to visit if you want to pick up some task. It has a list of things that are to be implemented in the near future
+Completed: 2021/07/27
