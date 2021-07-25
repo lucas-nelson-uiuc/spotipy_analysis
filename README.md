@@ -50,9 +50,8 @@ User Interaction is limited to expandable boxes scattered throughout the applica
 
 ## Acknowledgements <a name = "acknowledgements"></a>
 
-1. [Documenting your projects on GitHub](https://guides.github.com/features/wikis/) - GitHub Guides
-2. [documentation-handbook](https://github.com/jamiebuilds/documentation-handbook) - jamiebuilds
-3. [Documentation Guide](https://www.writethedocs.org/guide/) - Write the Docs
+1. [Spotipy](https://spotipy.readthedocs.io/en/2.18.0/) - Spotify API token generator and scraper
+2. [Streamlit](https://streamlit.io/) - web application platform
 
 ## Other Tools
 For more listening-related statistics, visit this other cool project: [Stats for Spotify](https://www.statsforspotify.com/)
