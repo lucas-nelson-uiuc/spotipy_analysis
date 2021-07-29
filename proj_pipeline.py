@@ -220,20 +220,12 @@ def pipeline_select_genre(artist_genres):
 			else:
 				return artist_genres[0]
 
-@st.cache
-def pipeline_genres_spotify(spotify_user):
-	"""Retrieve 'spotify recognized' genres"""
+# @st.cache
+# def pipeline_genres_spotify(spotify_user):
+# 	"""Retrieve 'spotify recognized' genres"""
 
-	auth_manager = SpotifyClientCredentials(client_id = spotify_user.client_id,
-											client_secret = spotify_user.client_secret)
-	sp = spotipy.Spotify(auth_manager=auth_manager)
+# 	auth_manager = SpotifyClientCredentials(client_id = spotify_user.client_id,
+# 											client_secret = spotify_user.client_secret)
+# 	sp = spotipy.Spotify(auth_manager=auth_manager)
 
-	return sp.recommendation_genre_seeds()['genres']
-
-if __name__ == '__main__':
-	user = SpotifyUser(client_id='3369a177760443e1ba8fdc24ffe8ee3a',
-						client_secret='26557253d83447879b0ff7251d291517')
-
-	playlists_str = """https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI"""
-
-	pipeline_single_spotify(user, playlists_str)
+# 	return sp.recommendation_genre_seeds()['genres']
