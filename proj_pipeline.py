@@ -32,6 +32,8 @@ class SpotifyUser():
 		self.client_id = client_id
 		self.client_secret = client_secret
 
+# GENRE CLASSIFICATION FUNCTION
+
 @st.cache
 def pipeline_single_spotify(spotify_user, playlist_url):
 	"""Gather spotify playlist data using user token and playlist url(s)"""
@@ -40,7 +42,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 											client_secret = spotify_user.client_secret)
 	sp = spotipy.Spotify(auth_manager=auth_manager)
 	
-	details_labels = ['title', 'artist', 'album', 'genre', 'url', 'duration', 'explicit', 'popularity',
+	details_labels = ['title', 'artist', 'album', 'genre', 'track_url', 'img_url', 'duration', 'explicit', 'popularity',
 					'artist_date', 'user_date', 'user_time']
 	features_labels = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness',
 						'liveness', 'valence', 'tempo', 'signature']
@@ -56,6 +58,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 			track_artist = item['track']['artists'][0]['name']
 			track_album = item['track']['album']['name']
 			track_url = item['track']['external_urls']['spotify']
+			track_img = item['track']['album']['images'][0]['url']
 			track_length = item['track']['duration_ms']
 			track_explicit = item['track']['explicit']
 			track_popularity = item['track']['popularity']
@@ -65,23 +68,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 			if len(artist_genres) == 0:
 				track_genre = 'NA'
 			else:
-				track_genre = artist_genres[0]
-				if 'indie' in track_genre:
-					track_genre = 'indie'
-				elif 'lo-fi' in track_genre:
-					track_genre = 'lo-fi'
-				elif 'post' in track_genre and 'rock' in track_genre:
-					track_genre = 'post-rock'
-				elif 'rock' in track_genre:
-					track_genre = 'rock'
-				elif 'alternative' in track_genre:
-					track_genre = 'alternative'
-				elif 'pop' in track_genre:
-					track_genre = 'pop'
-				elif 'classical' in track_genre:
-					track_genre = 'classical'
-				else:
-					track_genre = artist_genres[0]
+				track_genre = pipeline_select_genre(artist_genres)
 
 			# add details for when track was added by SpotifyUser
 			added_at = item['added_at']
@@ -109,7 +96,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 				proxy_date = track_added + '-01'
 				track_date = datetime.strptime(proxy_date, '%Y-%m-%d').date()
 
-			track_details.append([track_title, track_artist, track_album, track_genre, track_url, track_length,
+			track_details.append([track_title, track_artist, track_album, track_genre, track_url, track_img, track_length,
 									track_explicit, track_popularity, track_date, added_date, added_time])
 		
 		# gather track features
@@ -153,7 +140,6 @@ def pipeline_multip_spotify(spotify_user, playlist_url_string):
 	sp = spotipy.Spotify(auth_manager=auth_manager)
 
 	playlist_df_list = []
-	# playlist_names = []
 	
 	for playlist_url in playlist_url_string.split(','):
 
@@ -162,7 +148,6 @@ def pipeline_multip_spotify(spotify_user, playlist_url_string):
 		try:
 			playlist_url = playlist_url.strip()
 			playlist_df_list.append(pipeline_single_spotify(spotify_user, playlist_url))
-			# playlist_names.append()
 
 		except:
 			playlist_name = sp.playlist(playlist_url)['name']
@@ -189,6 +174,7 @@ def pipeline_rick_roll(spotify_user):
 		'title':track['name'],
 		'artist':track['artists'][0]['name'],
 		'album':track['album']['name'],
+		'genre':'pop',
 		'url':track['external_urls']['spotify'],
 		'duration':track['duration_ms'],
 		'explicit':track['explicit'],
@@ -205,6 +191,34 @@ def pipeline_rick_roll(spotify_user):
 		'tempo':audio_features['tempo'],
 		'signature':audio_features['time_signature']
 		}, index=['index']).reset_index(drop=True).drop(columns='index')
+
+def pipeline_select_genre(artist_genres):
+	if len(artist_genres) == 0:
+		return 'NA'
+	else:
+		for subgenre in artist_genres:
+			if 'indie' in subgenre:
+				return 'indie'
+			elif 'lo-fi' in subgenre:
+				return 'lo-fi'
+			elif 'post' in subgenre and 'rock' in subgenre:
+				return 'post-rock'
+			elif 'rock' in subgenre:
+				return 'rock'
+			elif 'alternative' in subgenre:
+				return 'alternative'
+			elif 'pop' in subgenre:
+				return 'pop'
+			elif 'hip' in subgenre and 'hop' in subgenre:
+				return 'hip-hop'
+			elif 'rap' in subgenre:
+				return 'rap'
+			elif 'classical' in subgenre or 'british' in subgenre or 'orchestra' in subgenre or 'symphony' in subgenre:
+				return 'classical'
+			elif 'jazz' in subgenre:
+				return 'jazz'
+			else:
+				return artist_genres[0]
 
 @st.cache
 def pipeline_genres_spotify(spotify_user):

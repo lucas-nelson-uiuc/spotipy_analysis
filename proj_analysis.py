@@ -6,8 +6,6 @@ from matplotlib import pyplot as plt, dates as mdates
 
 import proj_pipeline
 
-
-
 def analysis_search_dataframe(df, client_id, client_secret, song_str, artist_str, album_str, year_range):
     # ROC1: all empty fields
     if (song_str == '') & (artist_str == '') & (album_str == '') & (year_range == (df['artist_date'].min().year, df['artist_date'].max().year)):
@@ -202,7 +200,6 @@ def analysis_search_dataframe(df, client_id, client_secret, song_str, artist_str
     # R5C0: super weird exception; should never execute
     else:
         return "CODE ERROR: Please contact author to report bug."
-
 def analysis_filter_dataframe(df, playlist_list, artist_list, year_range):
     # R0C1: all empty fields
     if (playlist_list == []) & (artist_list == []) & (year_range == (df['artist_date'].min().year, df['artist_date'].max().year)):
@@ -214,7 +211,10 @@ def analysis_filter_dataframe(df, playlist_list, artist_list, year_range):
     
     # R2C1: filter playlists, filter artists
     elif (playlist_list != []) & (artist_list != []):
-        return df[(df['playlist'].isin(playlist_list)) & (df['artist'].isin(artist_list))].reset_index(drop=True)
+        if not df[(df['playlist'].isin(playlist_list)) & (df['artist'].isin(artist_list))].reset_index(drop=True).empty:
+            return df[(df['playlist'].isin(playlist_list)) & (df['artist'].isin(artist_list))].reset_index(drop=True)
+        else:
+            st.error('combination does not exist')
     
     # R2C2: filter playlists, filter date
     elif (playlist_list != []) & (year_range != (df['artist_date'].min().year, df['artist_date'].max().year)):
@@ -222,7 +222,10 @@ def analysis_filter_dataframe(df, playlist_list, artist_list, year_range):
     
     # R2C3: filter artists, filter date
     elif (artist_list != []) & (year_range != (df['artist_date'].min().year, df['artist_date'].max().year)):
-        return df[(df['artist'].isin(artist_list)) & (df['artist_date'].astype(str).str[:4].astype(int).isin(range(year_range[0],year_range[1]+1)))].reset_index(drop=True)
+        if not df[(df['artist'].isin(artist_list)) & (df['artist_date'].astype(str).str[:4].astype(int).isin(range(year_range[0],year_range[1]+1)))].reset_index(drop=True).empty:
+            return df[(df['artist'].isin(artist_list)) & (df['artist_date'].astype(str).str[:4].astype(int).isin(range(year_range[0],year_range[1]+1)))].reset_index(drop=True)
+        else:
+            st.error('Artist does not exist in year range')
     
     # R1C1: filter playlists
     elif playlist_list != []:
@@ -247,7 +250,6 @@ def analysis_song_decades(df):
     test_df = test_df[['duration', 'artist_date']]
     test_df['artist_date'] = test_df['artist_date'].astype(str).str[:4]
     test_df['artist_date'] = (test_df['artist_date'].astype(int) // 10) * 10
-    test_df['duration'] = test_df['duration'] // 60000
     test_df = test_df.set_index('artist_date').sort_index()
     result = test_df.groupby('artist_date').describe().unstack(1).reset_index().pivot(index='artist_date', values=0, columns='level_1')
     result = result[['count', 'max', 'min', 'mean', 'std', '25%', '50%', '75%']]
@@ -260,17 +262,17 @@ def analysis_song_decades(df):
         '25%':result['25%'].mean(),
         '50%':result['50%'].mean(),
         '75%':result['75%'].mean()
-        }, index=['Total'])
+        }, index=['Stats'])
     concat = pd.concat([result, app])
+    for col in concat.columns:
+        if col != 'count':
+            concat[col] = pd.to_datetime(concat[col], unit='ms').dt.time.astype(str).str[3:-7]
     concat['count'] = concat['count'].astype(int)
-    concat['max'] = concat['max'].astype(int)
-    concat['min'] = concat['min'].astype(int)
     return concat
-
 # production date container
 def analysis_decade_statistics(df):
     test_df = df.copy()
-    test_df = test_df.drop(columns=['user_date', 'user_time','url', 'tempo','signature','playlist'])
+    test_df = test_df.drop(columns=['user_date', 'user_time','track_url', 'img_url', 'tempo','signature','playlist'])
     test_df['artist_date'] = test_df['artist_date'].astype(str).str[:4]
     test_df['artist_date'] = (test_df['artist_date'].astype(int) // 10) * 10
     test_df = test_df.set_index('artist_date').sort_index()
@@ -279,28 +281,11 @@ def analysis_decade_statistics(df):
         'artist': lambda x : x.nunique(),
         'album': lambda x : x.nunique(),
         'genre': lambda x : x.nunique(),
-        'duration':'sum',
-        'explicit':'sum',
-        'popularity':'mean',
-        'danceability':'mean',
-        'energy':'mean',
-        'loudness':'mean',
-        'speechiness':'mean',
-        'acousticness':'mean',
-        'instrumentalness':'mean',
-        'liveness':'mean',
-        'valence':'mean'
+        'duration':'sum'
     })
-    test_df['popularity'] = test_df['popularity'].astype(int)
-    test_df['duration'] = test_df['duration'].apply(analysis_convert_ms)
-    for col in ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence']:
-        if col == 'loudness':
-            test_df[col] = (test_df[col].round(2) * (100/60)).astype(int)
-        else:
-            test_df[col] = (test_df[col].round(2) * 100).astype(int)
+    test_df['duration'] = pd.to_datetime(test_df['duration'], unit='ms').dt.time.astype(str).str[:-7]
     test_df.rename(columns={'title':'songs', 'artist':'artists', 'album':'albums','genre':'genres'}, inplace=True)
     return test_df
-
 # genre ecdf container
 def analysis_genre_trends(df):
     test_df = df[df['genre'] != 'NA']
@@ -309,26 +294,94 @@ def analysis_genre_trends(df):
     test_df = test_df.groupby(['user_date', 'genre']).size().reset_index().rename(columns={0:'count'})
     result = pd.pivot(test_df, index='genre', columns="user_date", values="count").fillna(0)
     return result.astype(int)
-
-def analysis_attribute_trends(df):
+# DESCRIPTION
+def analysis_attribute_decades(df):
     test_df = df.copy()
-    test_df.drop(columns=['title', 'artist', 'album', 'genre', 'url', 'duration', 'explicit', 'artist_date', 'user_time', 'tempo', 'signature', 'playlist'], inplace=True)
-    test_df['user_date'] = test_df['user_date'].astype(str).str[:4]
+    test_df.drop(columns=['title', 'artist', 'album', 'track_url', 'img_url', 'duration', 'explicit', 'user_date', 'user_time', 'signature', 'playlist'], inplace=True)
+    test_df['decade'] = test_df['artist_date'].astype(str).str[:4].apply(analysis_transform_year)
+    test_df.drop('artist_date', inplace=True)
     test_df['loudness'] = abs(test_df['loudness'] * 100/60)
     for col in list(test_df.columns[2:]):
-        if col != 'loudness':
+        if col not in ['loudness', 'genre', 'artist_date']:
             test_df[col] = test_df[col] * 100
-    return test_df.groupby('user_date').agg('mean')
-
+    return test_df.groupby(['decade', 'genre']).agg('mean')
+# attribute trends over time
+def analysis_attribute_trends(df, col):
+    test_df = df.copy()
+    test_df.drop(columns=['title', 'artist', 'album', 'genre', 'tempo', 'track_url', 'img_url', 'duration', 'explicit', 'artist_date', 'user_time', 'signature', 'playlist'], inplace=True)
+    test_df['user_date'] = test_df['user_date'].astype(str).str[:4]
+    test_df['loudness'] = abs(test_df['loudness'] * 100/60)
+    for column in list(test_df):
+        if column not in ['user_date', 'popularity', 'loudness']:
+            test_df[column] = test_df[column] * 100
+    if col == None:
+        return test_df.groupby('user_date').agg('mean').transpose()
+    if col != None:
+        return test_df.groupby('user_date').agg('mean').transpose().loc[col, : ]
+# song cumsum over time per genre
+def analysis_attribute_genre(df, col):
+    if col == 'artist_date':
+        test_df = df.copy()
+        test_df = test_df[test_df['genre'] != 'NA']
+        test_df = test_df[['genre', col, 'title']]
+        test_df.rename(columns={'title':'count'}, inplace=True)
+        test_df[col] = test_df[col].astype(str).str[:4].astype(int).apply(lambda x : analysis_custom_round(x))
+        test_df = test_df.groupby(['genre', col]).agg('count')
+        return test_df.reset_index().pivot(index='genre', columns=col).fillna(0).astype(int)
+    if col == 'user_date':
+        test_df = df.copy()
+        test_df = test_df[test_df['genre'] != 'NA']
+        test_df = test_df[['genre', col, 'title']]
+        test_df.rename(columns={'title':'count'}, inplace=True)
+        test_df[col] = test_df[col].astype(str).str[:4].astype(int)
+        test_df = test_df.groupby(['genre', col]).agg('count')
+        return test_df.reset_index().pivot(index='genre', columns=col).fillna(0).astype(int).cumsum(axis=1)
+# specific attribute over time per genre
+def analysis_attribute_sums(df, col):
+    test_df = df.copy()
+    test_df = test_df[test_df['genre'] != 'NA']
+    test_df.drop(columns=['title', 'artist', 'album', 'track_url', 'img_url', 'duration', 'explicit', 'artist_date', 'user_time', 'signature', 'playlist'], inplace=True)
+    test_df['user_date'] = test_df['user_date'].astype(str).str[:4]
+    test_df['loudness'] = abs(test_df['loudness'] * 100/60)
+    for column in list(test_df.columns):
+        if column not in ['user_date', 'genre', 'loudness', 'popularity']:
+            test_df[column] = test_df[column] * 100
+    test_df = test_df.groupby(['genre', 'user_date'])[col].agg('mean')
+    test_df = test_df.reset_index(level='user_date')
+    return test_df.reset_index().pivot(index='genre', columns='user_date').fillna(method='ffill', axis=1).replace({np.nan:0, np.inf:9999}).astype(int)
+# attribute trends % change over time
 def analysis_attribute_pctchange(df):
-    return analysis_attribute_trends(df).pct_change() * 100
-
+    return analysis_attribute_trends(df, col=None).pct_change().multiply(100)
+# DESCRIPTION
+def analysis_genre_pctchange(df, col):
+    return analysis_attribute_sums(df, col).pct_change(axis=1).fillna(0).replace(np.inf, 99.99).multiply(100).astype(int)
+# DESCRIPTION
+def analysis_plot_genrechange(df, col):
+    test_df = df[df['genre'] != 'NA'].groupby('genre').filter(lambda x : len(x) > 10).reset_index(drop=True).copy()
+    test_df.drop(columns=['title', 'artist', 'album', 'url', 'duration', 'explicit', 'artist_date', 'user_time', 'signature', 'playlist'], inplace=True)
+    test_df['user_date'] = test_df['user_date'].astype(str).str[:4].astype(int)
+    test_df['loudness'] = abs(test_df['loudness'] * 100/60)
+    for col in list(test_df.columns):
+        if col not in ['user_date', 'genre', 'loudness', 'popularity']:
+            test_df[col] = test_df[col] * 100
+    return test_df.groupby(['genre', 'user_date']).agg('mean')
+# DESCRIPTION
+def analysis_plot_pctchange(df, col):
+    test_df = df.copy()
+    test_df.drop(columns=['title', 'artist', 'album', 'genre', 'track_url', 'img_url', 'duration', 'explicit', 'artist_date', 'user_time', 'signature', 'playlist'], inplace=True)
+    test_df['user_date'] = test_df['user_date'].astype(str).str[:4].astype(int)
+    test_df['loudness'] = abs(test_df['loudness'] * 100/60)
+    for col in list(test_df.columns):
+        if col not in ['user_date', 'loudness', 'popularity']:
+            test_df[col] = test_df[col] * 100
+    return test_df.groupby(['user_date']).agg('mean')
+# DESCRIPTION
 def analysis_user_trends(df):
     test_df = df.copy()
     test_df = test_df[['user_date', 'user_time']]
     test_df['datetime'] = test_df['user_date'].astype(str) + ' ' + test_df['user_time'].astype(str)
     test_df.drop(columns=['user_date', 'user_time'], inplace=True)
-    # Convert to datetime
+    
     test_df['datetime'] = pd.to_datetime(test_df['datetime'])
     # Create Categorical Column
     cat_type = pd.CategoricalDtype(list(calendar.day_name), ordered=True)
@@ -339,7 +392,7 @@ def analysis_user_trends(df):
     test_df['time_of_day'] = pd.to_datetime('2000-01-01 ' +
                                     test_df['datetime'].dt.time.astype(str))
     return test_df
-
+# DESCRIPTION
 def analysis_user_trends2(df):
     test_df = df.copy()
     test_df = test_df[['user_date', 'user_time']]
@@ -348,11 +401,9 @@ def analysis_user_trends2(df):
 
     # df = pd.DataFrame({...})
 
-    # Convert to datetime
     test_df['datetime'] = pd.to_datetime(test_df['datetime'])
     
     return test_df
-
 # genre breakdown container
 def analysis_genre_pd(df):
     test_df = df[df['genre'] != 'NA'].copy()
@@ -360,7 +411,6 @@ def analysis_genre_pd(df):
     test_df['frac_pop'] = abs(test_df['popularity']) / 100
     test_df = test_df[['genre', 'duration', 'frac_pop', 'adj_loud', 'danceability', 'energy', 'speechiness',
                 'acousticness', 'instrumentalness', 'liveness', 'valence']]
-    
     agg_d = {
     'duration':'sum',
     'frac_pop':'mean',
@@ -393,7 +443,6 @@ def analysis_genre_pd(df):
     retr_df['percentage'] = retr_df.groupby(level='genre').apply(lambda x:100 * x / float(x.sum()))
     
     return retr_df.sort_values('value', ascending= False).sort_index(level='genre', sort_remaining=False)
-
 # TRANSFER DATAFRAMES: solely used in other files
 def analysis_cat_df(df):
     test_df = df[df['genre'] != 'NA'].copy()
@@ -408,21 +457,20 @@ def analysis_cat_df(df):
         'explicit': 'sum',
         'popularity': 'mean'
     })
-    result['duration'] = result['duration'].apply(analysis_convert_min)
+    result['duration'] = pd.to_datetime(result['duration'], unit='ms').dt.time
     result['popularity'] = result['popularity'].astype(int)
     result.rename(columns={'title':'songs','artist':'artists','album':'albums', 'genre':'genres'}, inplace=True)
     return result
-
 # CONVERSION functions
-def analysis_transform_year(year_col):
-    bottom_five = (year_col // 10) * 10
-    top_five = ((year_col // 10) + 1) * 10
-    return f'{bottom_five}-{top_five}'
-
-def analysis_convert_raw(df):
-    test_df = df.copy()
-    
-    duration_mins = test_df['duration'].sum() / 60000
+def analysis_custom_round(x, base=5):
+    return int(base * round(float(x)/base))
+def analysis_transform_year(year_col, base=10):
+    year_col = int(year_col)
+    bot_bound = (year_col // base) * base
+    top_bound = ((year_col // base) + 1) * base
+    return f'{bot_bound}-{top_bound}'
+def analysis_pretty_time(df):
+    duration_mins = df['duration'].sum() / 60000
     hours = int(duration_mins // 60)
     minutes = int(((duration_mins / 60) - hours) * 60)
     seconds = abs(round((((duration_mins / 60) - hours) * 60 - round(((duration_mins / 60) - hours) * 60)) * 60))
@@ -435,26 +483,3 @@ def analysis_convert_raw(df):
         return f'{seconds}s'
     else:
         return 'unspecified'
-
-def analysis_convert_min(mins):
-    hours = (mins // 60)
-    minutes = mins - (hours * 60)
-    seconds = (mins - int(mins)) * 60
-    if int(hours) > 0:
-        return "{}h{}m{}s".format(int(hours), int(minutes), int(seconds))
-    elif int(minutes) > 0:
-        return "{}m{}s".format(int(minutes), int(seconds))
-    else:
-        return "{}s".format(int(seconds))
-
-def analysis_convert_ms(ms):
-    seconds=(ms/1000)%60
-    minutes=(ms/(1000*60))%60
-    hours=(ms/(1000*60*60))%24
-    
-    if int(hours) > 0:
-        return "{}h{}m{}s".format(int(hours), int(minutes), int(seconds))
-    elif int(minutes) > 0:
-        return "{}m{}s".format(int(minutes), int(seconds))
-    else:
-        return "{}s".format(int(seconds))
