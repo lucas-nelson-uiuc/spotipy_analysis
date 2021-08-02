@@ -44,7 +44,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 	
 	details_labels = ['title', 'artist', 'album', 'genre', 'track_url', 'img_url', 'duration', 'explicit', 'popularity',
 					'artist_date', 'user_date', 'user_time']
-	features_labels = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness',
+	features_labels = ['danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness',
 						'liveness', 'valence', 'tempo', 'signature']
 	track_details = []
 	track_features = []
@@ -105,14 +105,13 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 			track_danceability = audio_features['danceability']
 			track_energy = audio_features['energy']
 			track_loudness = audio_features['loudness']
-			track_speechiness = audio_features['speechiness']
 			track_acousticness = audio_features['acousticness']
 			track_instrumentalness = audio_features['instrumentalness']
 			track_liveness = audio_features['liveness']
 			track_valence = audio_features['valence']
 			track_tempo = audio_features['tempo']
 			track_signature = audio_features['time_signature']
-			track_features.append([track_danceability, track_energy, track_loudness, track_speechiness,
+			track_features.append([track_danceability, track_energy, track_loudness,
 								track_acousticness, track_instrumentalness, track_liveness, track_valence,
 								track_tempo, track_signature])
 
@@ -183,7 +182,6 @@ def pipeline_rick_roll(spotify_user):
 		'danceability':audio_features['danceability'],
 		'energy':audio_features['energy'],
 		'loudness':audio_features['loudness'],
-		'speechiness':audio_features['speechiness'],
 		'acousticness':audio_features['acousticness'],
 		'instrumentalness':audio_features['instrumentalness'],
 		'liveness':audio_features['liveness'],

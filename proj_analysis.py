@@ -409,7 +409,7 @@ def analysis_genre_pd(df):
     test_df = df[df['genre'] != 'NA'].copy()
     test_df['adj_loud'] = abs(test_df['loudness']) / 60
     test_df['frac_pop'] = abs(test_df['popularity']) / 100
-    test_df = test_df[['genre', 'duration', 'frac_pop', 'adj_loud', 'danceability', 'energy', 'speechiness',
+    test_df = test_df[['genre', 'duration', 'frac_pop', 'adj_loud', 'danceability', 'energy',
                 'acousticness', 'instrumentalness', 'liveness', 'valence']]
     agg_d = {
     'duration':'sum',
@@ -417,7 +417,6 @@ def analysis_genre_pd(df):
     'adj_loud':'mean',
     'danceability':'mean',
     'energy':'mean',
-    'speechiness':'mean',
     'acousticness':'mean',
     'instrumentalness':'mean',
     'liveness':'mean',
@@ -438,7 +437,7 @@ def analysis_genre_pd(df):
 
     retr_df= pd.DataFrame(test_df.reset_index().melt(id_vars=['genre'],
                                         value_vars=['popularity', 'loudness', 'danceability',
-                                                    'energy', 'speechiness', 'acousticness',
+                                                    'energy', 'acousticness',
                                                     'instrumentalness', 'liveness', 'valence']).groupby(['genre','variable'])['value'].sum())
     retr_df['percentage'] = retr_df.groupby(level='genre').apply(lambda x:100 * x / float(x.sum()))
     

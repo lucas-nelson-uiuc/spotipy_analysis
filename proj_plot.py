@@ -48,7 +48,7 @@ def proj_plot_hist(df, col, hue=None):
         return sns.displot(data=df, x='user_date', kind='ecdf', hue='genre', palette='gist_ncar', stat='count'
                     ).set(xlabel='Year-Month', ylabel='Number of Songs').set_xticklabels(rotation=45)
 
-    if (col in ['popularity', 'danceability',  'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) & (hue == 'genre'):
+    if (col in ['popularity', 'danceability',  'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) & (hue == 'genre'):
         df = df[df['genre'] != 'NA'].groupby('genre').filter(lambda x : len(x) > 10).reset_index()
         if col == 'loudness':
             df['loudness'] = abs(df['loudness'] * 100/60)
@@ -71,7 +71,7 @@ def proj_plot_hist(df, col, hue=None):
                             ylabel='Number of Songs')
 
     
-    if (col in ['popularity', 'danceability',  'energy', 'loudness', 'speechiness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) & (hue == 'decade'):
+    if (col in ['popularity', 'danceability',  'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo']) & (hue == 'decade'):
         df['user_date'] = df['user_date'].astype(str).str[:4].astype(int)
         if col == 'loudness':
             df['loudness'] = abs(df['loudness'] * 100/60)
@@ -110,7 +110,6 @@ def proj_plot_attribute(df, method, col=None, hue=None):
                                             'danceability',
                                             'energy',
                                             'loudness',
-                                            'speechiness',
                                             'acousticness',
                                             'instrumentalness',
                                             'liveness',
@@ -132,7 +131,6 @@ def proj_plot_attribute(df, method, col=None, hue=None):
                                             'danceability',
                                             'energy',
                                             'loudness',
-                                            'speechiness',
                                             'acousticness',
                                             'instrumentalness',
                                             'liveness',
@@ -187,7 +185,7 @@ def proj_plot_nestpie(df, col):
                     e(.75), e(.71), e(.67), e(.63), e(.59), e(.55), e(.51), e(.47), e(.43),
     ]
                 
-    plt.style.use('seaborn-white')
+    plt.style.use('seaborn-dark')
     ax.pie(group_sum, 
         radius=1, 
         colors=outer_colors, 
