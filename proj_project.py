@@ -8,7 +8,8 @@ import numpy as np
 import random
 import plotly.express as px
 import plotly.graph_objs as go
-from plotly.subplots import make_subplots   
+from plotly.subplots import make_subplots 
+from plotly.colors import n_colors  
 import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image, ImageFilter
@@ -34,9 +35,28 @@ st.sidebar.title('Spotify Analysis Dashboard')
 
 # GATHER INPUT DATA
 with st.sidebar.beta_expander('Enter Input Data', True):
-        client_id = st.text_input('Client ID', '')
-        client_secret = st.text_input('Client secret', '')
-        playlist_input = st.text_area('Playlist URL(s)', '')
+        client_id = st.text_input('Client ID', '2da713ea3fa74b69b02a4e57dd719de1')
+        client_secret = st.text_input('Client secret', 'e46a2c2fecca41d99fbca809f191c71a')
+        playlist_input = st.text_area('Playlist URL(s)', """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
+            https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
+            https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
+            https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
+            https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
+            https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
+            https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
+            https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
+            https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
+            https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
+            https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
+            https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
+            https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
+            https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
+            https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
+            https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
+            https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
+            https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
+            https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
+        """)
         ready_button = st.checkbox('Gather Data Frame')
 
 # DATAFRAME FUNCTIONS
@@ -57,32 +77,27 @@ def retrieve_dataframe():
 
         return playlist_df
 def alter_dataframe(df):
-    
     if ready_button:
-        
         with st.sidebar.beta_expander("Select Data", False):
             global radio_page
             search_filter = st.radio(label='', options=['Filter','Search'])
 
             if search_filter == 'Filter':
-
                 st.subheader('Filter Parameters')
                 filter_playlist = st.multiselect('Playlist', options=list(np.sort(data['playlist'].unique())))
-                filter_artist = st.multiselect('Artist', options=list(np.sort(data['artist'].unique())))
                 filter_release = st.slider('Release Date',
                                             min_value=df['artist_date'].min().year,
                                             max_value=df['artist_date'].max().year,
                                             value = (df['artist_date'].min().year, df['artist_date'].max().year),
                                             step=1)
                 st.subheader('Dashboard Views')
-                radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Genre Breakdown', 'Listening Trends', 'Spotify Usage', 'Attribute Correlations', 'Random Statistics', 'Recommendations [Beta]'])
+                radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Listening Trends', 'Random Statistics', 'Recommendations [Beta]'])
                 submit = st.checkbox(label='Filter')
                 
                 if submit:
-                    return proj_analysis.analysis_filter_dataframe(df, filter_playlist, filter_artist, filter_release)
+                    return proj_analysis.analysis_filter_dataframe(df, filter_playlist, filter_release)
             
             if search_filter == 'Search':
-                
                 st.subheader('Search Parameters')
                 search_song = st.text_input('Song')
                 search_artist = st.text_input('Artist')
@@ -93,7 +108,7 @@ def alter_dataframe(df):
                                         value = (df['artist_date'].min().year, df['artist_date'].max().year),
                                         step=1)
                 st.subheader('Dashboard Views')
-                radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Genre Breakdown', 'Listening Trends', 'Spotify Usage', 'Attribute Correlations', 'Random Statistics', 'Recommendations [Beta]'])
+                radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Listening Trends', 'Random Statistics', 'Recommendations [Beta]'])
                 submit = st.checkbox(label='Search')
 
                 if submit:
@@ -133,9 +148,23 @@ def project_quick_stats():
 def project_histry_page(df):
     st.title('Spotify Activity Over Time')
     with st.beta_expander('Description...'):
-        st.write('enter description here...')
-    year = st.selectbox('Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='13:36_0802')
+        desc_cols = st.beta_columns((1,1))
+        desc_cols[0].subheader('Percent of Total Songs by User Date Added')
+        desc_cols[0].write('Description of this section')
+        desc_cols[1].subheader('Percent of Total Songs by Release Date')
+        desc_cols[1].write('Description of this section')
+        desc_cols[0].subheader('Genre Songs by User Date Added')
+        desc_cols[0].write('Description of this section')
+        desc_cols[1].subheader('Genre Songs by Release Date')
+        desc_cols[1].write('Description of this section')
+    # grouped bar chart
+    option_cols = st.beta_columns((2,1,1))
+    year = option_cols[0].selectbox('Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='13:36_0802')
+    option_01 = option_cols[1].radio(label='Metric', options=['Total Songs', 'Percent of Total Songs'], key='tomato17:12')
+    option_02 = option_cols[2].radio(label='By', options=['User Date Added', 'Release Date'], key='tomato17:13')
     px_df = df.copy()
+    if year != 'All Years':
+        px_df = df[df['user_date'].astype(str).str[:4] == year].copy()
     px_df = px_df[['user_date', 'artist_date', 'title', 'artist', 'album']]
     px_df['user_date'] = px_df['user_date'].astype(str).str[:4].astype(int)
     px_df = px_df.groupby('user_date').agg({
@@ -143,11 +172,22 @@ def project_histry_page(df):
         'artist' : lambda x : x.nunique(),
         'album' : lambda x : x.nunique(),
     })
-    fig = go.Figure(data=
-        [go.Bar(name=px_df.columns[i].title(), x=list(px_df.index), y=px_df[px_df.columns[i]], text=px_df[px_df.columns[i]], textposition='auto') for i in range(len(px_df.columns))]
-    )
-    st.plotly_chart(fig, use_container_width=True)
+    fig = make_subplots(rows=1, cols=2)
 
+
+    for i in range(len(px_df.columns)):
+        fig.add_trace(
+            go.Bar(
+                name=px_df.columns[i].title(),
+                x=list(px_df.index),
+                y=px_df[px_df.columns[i]],
+                text=px_df[px_df.columns[i]],
+                textposition='auto'
+            ),
+            row=1, col=1
+        )
+    #####################
+    # horizontal bar chart
     px_df = df.copy()
     px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
     px_df['user_mnth'] = px_df['user_date'].astype(str).str[5:7].astype(int)
@@ -168,48 +208,106 @@ def project_histry_page(df):
     yr_df = yr_df.transpose().cumsum()
 
     test_df = pd.DataFrame({
-        'month':['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] * 3,
+        'month':['Jan ', 'Feb ', 'Mar ', 'Apr ', 'May ', 'Jun ', 'Jul ', 'Aug ', 'Sep ', 'Oct ', 'Nov ', 'Dec '] * 3,
         'type':['song'] * 12 + ['artist'] * 12 + ['album'] * 12,
         'value':[yr_df.iloc[i][col] for col in list(yr_df.columns) for i in range(12)]
     })
-    fig = px.bar(test_df, x="value", y="month",
-                text='value',
-                color="type", orientation='h')
+    
+    fig.add_trace(
+        go.Bar(
+            x=test_df['value'],
+            y=test_df['month'],
+            orientation='h',
+            marker=dict(
+                color=['#636EFA'] * 12 + ['#EF553B'] * 12 + ['#00CC96'] * 12
+            ),
+            showlegend=False
+        ),
+        row=1, col=2
+    )
     st.plotly_chart(fig, use_container_width=True)
     ##############################################
+    # polar graph
     st.title('Taste of Music Over Time')
     with st.beta_expander('Description'):
         st.write('explanation goes here i think...')
     options_cols = st.beta_columns((1,1))
     year = options_cols[0].selectbox('Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='15:41_0802')
-    by = options_cols[1].radio('Group', options=['Artist', 'Genre'])
+    by = options_cols[1].radio('Group', options=['Artist', 'Genre', 'None'])
     px_df = df[df['genre'] != 'NA'].copy()
     if year != 'All Years':
         px_df = px_df[px_df['user_date'].astype(str).str[:4] == year]
-    if by == 'Artist':
-        key = 'artist'
-        tt_artist = px_df.groupby('artist').size().sort_values(ascending=False)[:10].index
-        tt_filter = sorted(tt_artist)
-        df_art = px_df[px_df['artist'].isin(tt_filter)]
-        polar_df = df_art.groupby('artist')[['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence']].agg('mean')
-    if by =='Genre':
-        key = 'genre'
-        tt_genre = px_df.groupby('genre').size().sort_values(ascending=False)[:10].index
-        tt_filter = sorted(tt_genre)
-        df_gnr = px_df[px_df['genre'].isin(tt_filter)]
-        polar_df = df_gnr.groupby('genre')[['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence']].agg('mean')
-    for col in polar_df.columns:
-        if col not in ['popularity', 'loudness', 'artist']:
-            polar_df[col] = polar_df[col].multiply(100)
-        if col == 'loudness':
-            polar_df[col] = polar_df[col].multiply(-(100/60))
-    polar_df = pd.melt(polar_df)
-    polar_df[key] = list(tt_filter) * 8
+    if by != 'None':
+        if by == 'Artist':
+            key = 'artist'
+            tt_artist = px_df.groupby('artist').size().sort_values(ascending=False)[:10].index
+            tt_filter = sorted(tt_artist)
+            df_art = px_df[px_df['artist'].isin(tt_filter)]
+            polar_df = df_art.groupby('artist')[['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence']].agg('mean')
+        if by =='Genre':
+            key = 'genre'
+            tt_genre = px_df.groupby('genre').size().sort_values(ascending=False)[:10].index
+            tt_filter = sorted(tt_genre)
+            df_gnr = px_df[px_df['genre'].isin(tt_filter)]
+            polar_df = df_gnr.groupby('genre')[['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence']].agg('mean')
+        for col in polar_df.columns:
+            if col not in ['popularity', 'loudness', 'artist']:
+                polar_df[col] = polar_df[col].multiply(100)
+            if col == 'loudness':
+                polar_df[col] = polar_df[col].multiply(-(100/60))
+        polar_df = pd.melt(polar_df)
+        polar_df[key] = list(tt_filter) * 8
+        attributes = ['popularity','danceability','energy','loudness','acousticness',
+            'instrumentalness','liveness','valence']
+        colors = n_colors('rgb(0,153,76)', 'rgb(153,255,204)', 10, colortype='rgb')
 
-    fig = px.line_polar(polar_df, r="value", theta="variable", color=key, line_close=True,
-                    color_discrete_sequence=px.colors.sequential.Magenta,
+        fig = px.line_polar(polar_df, r="value", theta="variable", color=key, line_close=True,
+                    color_discrete_sequence=colors[::-1],
                     template='plotly_dark')
-    st.plotly_chart(fig, use_container_width=True)
+    if by == 'None':
+        key = ''
+        tt_filter = ['Average']
+        polar_df = px_df[['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness', 'liveness', 'valence']]
+        for col in polar_df.columns:
+            if col not in ['popularity', 'loudness', 'artist']:
+                polar_df[col] = polar_df[col].multiply(100)
+            if col == 'loudness':
+                polar_df[col] = polar_df[col].multiply(-(100/60))
+        
+        polar_df.loc['mean'] = polar_df.mean()
+        polar_df = pd.melt(polar_df)
+        polar_df = polar_df.groupby('variable').agg('mean').reset_index()
+        polar_df[key] = ['Average'] * 8
+
+        fig = px.bar_polar(polar_df, r="value", theta="variable",
+                    color_discrete_sequence=px.colors.sequential.PuBuGn[::-1],
+                    template='plotly_dark')
+    plot_cols = st.beta_columns((1,1))
+    plot_cols[1].plotly_chart(fig, use_container_width=True)
+    #########################################################
+    # violin plot
+    attributes = ['popularity','danceability','energy','loudness','acousticness',
+            'instrumentalness','liveness','valence']
+    px_df = df.copy()
+    if year != 'All Years':
+        px_df = df[df['user_date'].astype(str).str[:4] == year].copy()
+    px_df = px_df[attributes]
+    for col in px_df:
+        if col not in ['popularity', 'loudness']:
+            px_df[col] = px_df[col].multiply(100)
+        if col == 'loudness':
+            px_df[col] = px_df[col].multiply(-(100/60))
+
+    colors = n_colors('rgb(0, 102, 51)', 'rgb(5, 255, 164)', 8, colortype='rgb')
+
+    fig = go.Figure()
+    for col, color in zip(list(px_df.columns)[::-1], colors):
+        fig.add_trace(go.Violin(x=px_df[col], line_color=color, name=col.title()))
+
+    fig.update_traces(orientation='h', side='positive', width=3, points=False)
+    fig.update_layout(xaxis_showgrid=True, showlegend=False)
+    plot_cols[0].plotly_chart(fig, use_container_width=True)
+    ########################################################
 def project_tracks_page(df):
     
     # data transformations
@@ -317,98 +415,6 @@ def project_tracks_page(df):
         attr_group[2].image('{}'.format(arg_df.loc[arg_df[attr].argmin(), 'img_url']))
         attr_group[2].subheader('Lowest {}'.format(attr.title()))
         attr_group[2].write('{}'.format(arg_df.loc[arg_df[attr].argmin(), 'title']))
-def project_randm_page(df):
-    idx = random.randint(0, df.shape[0])
-    idx_title = df.loc[idx,'title']
-    idx_artist = df.loc[idx,'artist']
-    idx_album = df.loc[idx,'album']
-    idx_genre = df.loc[idx,'genre']
-    idx_track_url = df.loc[idx,'track_url']
-    idx_img_url = df.loc[idx,'img_url']
-    idx_duration = df.loc[idx,'duration']
-    idx_explicit = df.loc[idx,'explicit']
-    idx_popularity = df.loc[idx,'popularity']
-    idx_artist_date = df.loc[idx,'artist_date']
-    idx_user_date = df.loc[idx,'user_date']
-    idx_user_time = df.loc[idx,'user_time']
-    idx_danceability = (df.loc[idx,'danceability'] * 100).round(2)
-    idx_energy = (df.loc[idx,'energy'] * 100).round(2)
-    idx_loudness = (df.loc[idx,'loudness'] * (-100/60)).round(2)
-    idx_acousticness = (df.loc[idx,'acousticness'] * 100).round(2)
-    idx_instrumentalness = (df.loc[idx,'instrumentalness'] * 100).round(2)
-    idx_liveness = (df.loc[idx,'liveness'] * 100).round(2)
-    idx_valence = (df.loc[idx,'valence']* 100).round(2)
-    idx_playlist = df.loc[idx,'playlist']
-
-    
-    rand_group = st.beta_columns((2,7))
-    with rand_group[0]:
-        st.image(idx_img_url)
-    with rand_group[1]:
-        spotify_logo = '[![this is an image link]({})]({})'.format('https://i.imgur.com/TejSfM3.png', idx_track_url)
-        youtube_logo = '[![this is an image link]({})](https://www.youtube.com/results?search_query={})'.format('https://i.imgur.com/LkMsDsO.png', '+'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
-        wikiped_logo = '[![this is an image link]({})](https://en.wikipedia.org/wiki/{})'.format('https://i.imgur.com/UIllM9Y.png', '_'.join(idx_artist.split(' ')))
-        googlee_logo = '[![this is an image link]({})](https://www.google.com/search?q={})'.format('https://i.imgur.com/SbD92XG.png', '+'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
-        twitter_logo = '[![this is an image link]({})](https://twitter.com/search?q={}&src=typed_query)'.format('https://i.imgur.com/XMNpp3p.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
-        facebok_logo = '[![this is an image link]({})](https://www.facebook.com/search/top?q={})'.format('https://i.imgur.com/kvkQy1h.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
-        redditt_logo = '[![this is an image link]({})](https://www.reddit.com/search/?q={})'.format('https://i.imgur.com/idnSbNj.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
-        st.title(idx_title)
-        st.subheader('Explore the music...')
-        st.markdown(f"""
-            {spotify_logo}&nbsp&nbsp&nbsp&nbsp
-            {youtube_logo}&nbsp&nbsp&nbsp&nbsp
-            {wikiped_logo}&nbsp&nbsp&nbsp&nbsp
-            {googlee_logo}&nbsp&nbsp&nbsp&nbsp
-            {twitter_logo}&nbsp&nbsp&nbsp&nbsp
-            {facebok_logo}&nbsp&nbsp&nbsp&nbsp
-            {redditt_logo}
-        """)
-
-    attributes = ['artist', 'album', 'genre', 'playlist',
-                    'artist_date', 'user_date', 'user_time', 'duration',
-                    'popularity', 'danceability', 'energy', 'loudness',
-                    'acousticness', 'instrumentalness', 'liveness', 'valence',
-                    'explicit']
-    idx_attributes = [idx_artist, idx_album, idx_genre, idx_playlist,
-                    idx_artist_date, idx_user_date, idx_user_time, idx_duration,
-                    idx_popularity, idx_danceability, idx_energy, idx_loudness,
-                    idx_acousticness, idx_instrumentalness, idx_liveness, idx_valence,
-                    idx_explicit]
-    labels = ['Artist', 'Album', 'Genre', 'Playlist',
-                'Released', 'Date Added', 'Time Added', 'Duration',
-                'Popularity', 'Danceability', 'Energy', 'Loudness',
-                'Acoustic', 'Instrumental', 'Liveness', 'Valence',
-                'Explicitness']
-
-    for i, attr, idx_attr, label in zip(range(len(attributes)), attributes, idx_attributes, labels):
-        if i % 4 == 0:
-            rand_group = st.beta_columns((1.5,2,2,1.5))
-        
-        # duration cell; sole use of `project_pretty_time`
-        if attr == 'duration':
-            rand_group[i % 4].title(label)
-            rand_group[i % 4].subheader(project_pretty_time(idx_duration))
-            rank_df = df[attr].rank(ascending=True)
-            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
-        # first row; filtered data is strictly non-numeric
-        elif attr in ['artist', 'album', 'genre', 'playlist']:
-            rand_group[i % 4].title(label)
-            rand_group[i % 4].subheader(idx_attr)
-            rand_group[i % 4].write('Songs: {}'.format(df[df[attr] == idx_attr].shape[0]))
-            rank_df = df[attr].value_counts().sort_values(ascending=False).rank(method='max', ascending=False)
-            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.loc[rank_df.index == idx_attr].item())))
-        # sort ascending = True
-        elif attr in ['liveness', 'loudness']:
-            rand_group[i % 4].title(label)
-            rand_group[i % 4].subheader(idx_attr)
-            rank_df = df[attr].rank(ascending=True)
-            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
-        # sort ascending = False
-        else:
-            rand_group[i % 4].title(label)
-            rand_group[i % 4].subheader(idx_attr)
-            rank_df = df[attr].rank(ascending=False)
-            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
 def project_artist_page(df):
     st.title('Top Artists by User Date Added')
     with st.beta_expander('Description...'):
@@ -509,7 +515,8 @@ def project_artist_page(df):
     for i in range(len(wk_df.index)):
         wk_df.iloc[i] = wk_df.iloc[i] * 100 / wk_df.iloc[i].sum()
 
-    # top_labels = [attr.title() for attr in attributes]
+    with st.beta_expander('DataFrame'):
+        st.dataframe(wk_df)
 
     colors = px.colors.sequential.Cividis
 
@@ -636,118 +643,9 @@ def project_artist_page(df):
         image = Image.open(requests.get(img_url, stream=True).raw)
         wksp[0].subheader('Before'); wksp[0].image(image)
         wksp[1].subheader('After'); wksp[1].image(image.filter(SHARPEN))
-def project_genres_page():
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Top Genres and Attribute Distributions')
-    cols_group[0].write('Here is a pie chart detailing your top genres of the playlist you selected.')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pd(f_data).drop(columns='value'))
-    cols_group[1].pyplot(proj_plot.proj_plot_nestpie(f_data, 'genre'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Genres by Date Released')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_genre(f_data, 'artist_date'))
-    cols_group[1].pyplot(proj_plot.proj_plot_hist(f_data, 'genre'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Genres by Date Added')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_genre(f_data, 'user_date'))
-    cols_group[1].pyplot(proj_plot.proj_plot_hist(f_data, 'user_date'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Popularity by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'popularity'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'popularity', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'popularity'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'popularity'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Danceability by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'danceability'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'danceability', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'danceability'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'danceability'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Energy by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'energy'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'energy', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'energy'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'energy'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Loudness by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'loudness'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'loudness', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'loudness'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'loudness'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Acousticness by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'acousticness'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'acousticness', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'acousticness'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'acousticness'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Instrumentalness by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'instrumentalness'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'instrumentalness', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'instrumentalness'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'instrumentalness'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Liveness by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'liveness'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'liveness', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'liveness'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'liveness'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Valence by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'valence'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'valence', 'genre'))
-    cols_group[1].subheader('Annual Percent Change')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'valence'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'valence'))
-
-    cols_group = st.beta_columns((1,1))
-    cols_group[0].subheader('Tempo by Genre')
-    with cols_group[0].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_attribute_sums(f_data, 'tempo'))
-    cols_group[0].pyplot(proj_plot.proj_plot_hist(f_data, 'tempo', 'genre'))
-    cols_group[1].subheader('Annual Percent Changes')
-    with cols_group[1].beta_expander('DataFrame'):
-        st.dataframe(proj_analysis.analysis_genre_pctchange(f_data, 'tempo'))
-    cols_group[1].pyplot(proj_plot.proj_plot_attribute(f_data, 'pct_change', 'tempo'))
 def project_trends_page(df):
-    ##################################
-    st.title('Listening Trends Over Time')
+    ##############################################
+    st.title('Genre Trends Over Time')
     with st.beta_expander('Description...'):
         desc_cols = st.beta_columns((1,1))
         desc_cols[0].subheader('Percent of Total Songs by User Date Added')
@@ -758,11 +656,9 @@ def project_trends_page(df):
         desc_cols[0].write('Description of this section')
         desc_cols[1].subheader('Genre Songs by Release Date')
         desc_cols[1].write('Description of this section')
-    
     option_cols = st.beta_columns((1,1))
     option_01 = option_cols[0].radio(label='Metric', options=['Total Songs', 'Percent of Total Songs'], key='tomato17:12')
     option_02 = option_cols[1].radio(label='By', options=['User Date Added', 'Release Date'], key='tomato17:13')
-
     px_df = df.copy()
     px_df['user_year'] = df['user_date'].astype(str).str[:4]
     px_df['user_month'] = df['user_date'].astype(str).str[5:7]
@@ -798,14 +694,14 @@ def project_trends_page(df):
                                 index='artist_yrmn', columns="genre", values="count").fillna(0).cumsum().reset_index()
             x = test_df['artist_yrmn']
     
-        css = px.colors.sequential.Blugrn
+        colors = n_colors('rgb(229,255,204)', 'rgb(0,102,102)', len(test_df.columns) - 2, colortype='rgb')
         fig = go.Figure()
 
-        for i in range(len(test_df.columns) - 2):
+        for i, color in zip(range(len(test_df.columns) - 2), colors):
             fig.add_trace(go.Scatter(
                 x=x, y=test_df[test_df.columns[i+2]],
                 mode='lines',
-                line=dict(width=0.5, color='{}'.format(css[i % len(css)])),
+                line=dict(width=0.5, color=color),
                 stackgroup='one',
                 groupnorm='percent',
                 name=test_df.columns[2:][i]
@@ -828,12 +724,12 @@ def project_trends_page(df):
         st.write('Here is a description of the grpah you are looking at.')
     
     top_ten_genre = list(df.groupby('genre').size().sort_values(ascending=False)[:10].index)
-    for col in df.columns:
-        if col in ['danceability', 'energy', 'instrumentalness', 'acousticness', 'liveness', 'valence']:
-            df[col] = df[col].multiply(100)
-        if col == 'loudness':
-            df[col] = df[col].multiply(- (100 / 60))
     px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
+    for col in px_df.columns:
+        if col in ['danceability', 'energy', 'instrumentalness', 'acousticness', 'liveness', 'valence']:
+            px_df[col] = px_df[col].multiply(100)
+        if col == 'loudness':
+            px_df[col] = px_df[col].multiply(- (100 / 60))
     px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
     px_df = px_df.groupby('user_year').agg('mean').reset_index()
     agg_df = px_df.groupby('user_year').agg('mean').reset_index()
@@ -858,145 +754,49 @@ def project_trends_page(df):
         xaxis_title="Year",
         yaxis_title="Value")
     st.plotly_chart(fig, use_container_width=True)
-    ###############################################
-    st.title('Attribute Trends Over Time by Genre')
+    ##############################################
+    st.title('Attribute Distributions Over Time')
     with st.beta_expander('Description...'):
-        st.write('Here is a description of the grpah you are looking at.')
-    cols_group = st.beta_columns((3,7))
-    radio = cols_group[0].radio(label='Dimensions', options=['2D', '3D'], key='tomato1')
-    if '2D' in radio:
-        px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
-        attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
-                                                'Acousticness', 'Liveness', 'Valence']
-        x = cols_group[0].selectbox(label='Attribute 01',
-                                    options = attributes,
-                                    key='tomato2')
-        y = cols_group[0].selectbox(label='Attribute 02',
-                                    options = attributes,
-                                    key='tomato3')
-        fig = px.scatter(px_df, x=x.lower(), y=y.lower(), color='genre')
-        cols_group[1].plotly_chart(fig)
+        st.write('description goes here boss...')
+    attributes = ['popularity','danceability','energy','loudness','acousticness',
+            'instrumentalness','liveness','valence']
+    cols_group = st.beta_columns((1,1))
+    year = cols_group[0].selectbox(label='Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].astype(int).unique()))
+    if year != 'All Years':
+        genre = cols_group[1].selectbox(label='Genre', options=['All Genres'] + sorted(df.fillna('NA')[(df['genre'] != 'NA') & (df['user_date'].astype(str).str[:4].astype(int) == year)]['genre'].unique()))
+    else:
+        genre = cols_group[1].selectbox(label='Genre', options=['All Genres'] + sorted(df[df['genre'] != 'NA']['genre'].unique()))
+    px_df = df[df['genre'] != 'NA'].copy()
     
-    if '3D' in radio:
-        attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
-                                                'Acousticness', 'Liveness', 'Valence']
-        x = cols_group[0].selectbox(label='Attribute 01',
-                                    options = attributes,
-                                    key='tomato4')
-        y = cols_group[0].selectbox(label='Attribute 02',
-                                    options = attributes,
-                                    key='tomato5')
-        px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
-        px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
-        px_df['user_month'] = px_df['user_date'].astype(str).str[5:7].astype(int)
-        px_df['user_day'] = px_df['user_date'].astype(str).str[-2:].astype(int)
-        px_df['user_ym'] = px_df['user_year'] + (px_df['user_month'] / 12) + (px_df['user_day'] / 365)
-        fig = px.scatter_3d(px_df, x=x.lower(), y=y.lower(), z='user_ym', color='genre')
-        cols_group[1].plotly_chart(fig)
-    ################################################
-    st.title('Attribute Trends Over Time by User Date Added')
-    with st.beta_expander('Description...'):
-        st.write('Here is a description of the graph you are looking at.')
-    cols_group = st.beta_columns((3,7))
-    radio = cols_group[0].radio(label='Dimensions', options=['2D', '3D'], key='tomato6')
-    if '2D' in radio:
-        px_df = df.copy()
-        px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
-        attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
-                                                'Acousticness', 'Liveness', 'Valence']
-        x = cols_group[0].selectbox(label='Attribute 01',
-                                    options = attributes,
-                                    key='tomato7')
-        y = cols_group[0].selectbox(label='Attribute 02',
-                                    options = attributes,
-                                    key='tomato8')
-        fig = px.scatter(px_df, x=x.lower(), y=y.lower(), color='user_year')
-        cols_group[1].plotly_chart(fig)
+    if (year != 'All Years') & (genre != 'All Genres'):
+        px_df = px_df[(px_df['user_date'].astype(str).str[:4].astype(int) == year) & (px_df['genre'] == genre)][attributes]
+    elif (year != 'All Years') & (genre == 'All Genres'):
+        px_df = px_df[px_df['user_date'].astype(str).str[:4].astype(int) == year][attributes]
+    elif (year == 'All Years') & (genre != 'All Genres'):
+        px_df = px_df[px_df['genre'] == genre][attributes]
+    elif (year == 'All Years') & (genre == 'All Genres'):
+        px_df = px_df[attributes]
+    else:
+        st.error('Combination does not exist')
     
-    if '3D' in radio:
-        attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
-                                                'Acousticness', 'Liveness', 'Valence']
-        x = cols_group[0].selectbox(label='Attribute 01',
-                                    options = attributes,
-                                    key='tomato9')
-        y = cols_group[0].selectbox(label='Attribute 02',
-                                    options = attributes,
-                                    key='tomato10')
-        px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
-        px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
-        px_df['user_month'] = px_df['user_date'].astype(str).str[5:7].astype(int)
-        px_df['user_day'] = px_df['user_date'].astype(str).str[-2:].astype(int)
-        px_df['user_ym'] = px_df['user_year'] + (px_df['user_month'] / 12) + (px_df['user_day'] / 365)
-        fig = px.scatter_3d(px_df, x=x.lower(), y=y.lower(), z='user_ym', color='user_ym')
-        cols_group[1].plotly_chart(fig)
-def project_spuser_page():
-    titl00  = st.header('Your Spotify History...')
-    desc00  = st.markdown(
-        """
-        This is how you utilize Spotify. This is how you utilize Spotify. This is how you utilize Spotify. This is how you utilize Spotify.
-        This is how you utilize Spotify. This is how you utilize Spotify. This is how you utilize Spotify.
+    for col in px_df:
+        if col not in ['popularity', 'loudness']:
+            px_df[col] = px_df[col].multiply(100)
+        if col == 'loudness':
+            px_df[col] = px_df[col].multiply(-(100/60))
 
-        This is how you utilize Spotify. This is how you utilize Spotify. This is how you utilize Spotify. This is how you utilize Spotify. 
-        """)
-    cols00a = st.beta_columns((4,6))
-    desc00a = cols00a[0].subheader('Addition by Year')
-    data00a = cols00a[0].dataframe(proj_analysis.analysis_cat_df(f_data))
-    plot00a = cols00a[1].pyplot(proj_plot.proj_plot_factor(f_data))
+    colors = n_colors('rgb(0, 102, 51)', 'rgb(5, 255, 164)', 8, colortype='rgb')
 
-    cols00b = st.beta_columns((4,6))
-    desc00b = cols00b[0].subheader('Addition by Hour of Day')
-    data00b = cols00b[0].dataframe(proj_analysis.analysis_user_trends2(f_data))
-    plot00b = cols00b[1].pyplot(proj_plot.plot_user_datetime(f_data))
-    return titl00, desc00, cols00a, desc00a, data00a, plot00a, cols00b, desc00b, data00b, plot00b
-def project_correl_page(df):
-    #data ETL-L
-    corr_df = df[df['genre'] != 'NA'].groupby('genre').filter(lambda x : len(x) > 10).reset_index(drop=True).copy()
-    prpt_df = df[df['genre'] != 'NA'].groupby('genre').filter(lambda x : len(x) > 10).reset_index(drop=True).copy()
-    prpt_cols = ['popularity', 'danceability', 'energy', 'loudness', 'acousticness', 'genre']
-    corr_cols = prpt_cols + ['duration', 'instrumentalness', 'liveness', 'valence']
-    for column in corr_cols:
-        if column not in ['popularity', 'loudness', 'genre', 'duration']:
-            try:
-                prpt_df[column] = prpt_df[column].multiply(100).round(2)
-                corr_df[column] = corr_df[column].multiply(100).round(2)
-            except:
-                pass
-        if column == 'loudness':
-            prpt_df[column] = prpt_df[column].multiply(-(100/60)).round(2)
-            corr_df[column] = corr_df[column].multiply(-(100/60)).round(2)
-    
-    # correlation graph
-    cols_group = st.beta_columns((3,7))
-    cols_group[0].title('Plot 01: Correlation Plot')
-    cols_group[0].write('Here is my description. dawg.')
-    sns.set_theme(style="white")
-    d = corr_df[corr_cols]
-    corr = d.corr()
-    mask = np.triu(np.ones_like(corr, dtype=bool))
-    f, ax = plt.subplots()
-    cmap = sns.diverging_palette(230, 20, as_cmap=True)
-    ax = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
-                square=True, linewidths=.5, cbar_kws={"shrink": .5})
-    cols_group[1].pyplot(f)
+    fig = go.Figure()
+    for col, color in zip(list(px_df.columns)[::-1], colors):
+        fig.add_trace(go.Violin(x=px_df[col], line_color=color, name=col.title()))
 
-    # pairplot graph
-    cols_group = st.beta_columns((3,7))
-    cols_group[0].title('Plot 02: Pair Plot')
-    cols_group[0].write('Here is my description. dawg.')
-    topten_genre = list(df[df['genre'] != 'NA'].groupby('genre').size().sort_values(ascending=False)[:10].index)
-    scat_df = df[df['genre'].isin(topten_genre)]
-    scat_cols = ['popularity', 'danceability', 'energy', 'loudness', 'acousticness']
+    fig.update_traces(orientation='h', side='positive', width=3, points=False)
+    fig.update_layout(xaxis_showgrid=True, showlegend=False)
+    st.plotly_chart(fig, use_container_width=True)
+    # heat map absolute
+    heat_cols = st.beta_columns((1,1))
     
-    fig = px.scatter_matrix(scat_df, dimensions=scat_cols,
-                    color='genre', color_discrete_sequence=px.colors.sequential.RdBu)
-    
-    cols_group[1].plotly_chart(fig, use_container_width=True)
-    # fig = sns.pairplot(data=prpt_df[prpt_cols], hue='genre', palette='turbo', diag_kind='kde').set(xlim=(0,100), ylim=(0,100))
-    # cols_group[1].pyplot(fig)
-
-    cols_group = st.beta_columns((3,7))
-    cols_group[0].title('Plot 03a: Attributes Over Time')
-    cols_group[0].write('Here is my description. dawg.')
     min_year = df['user_date'].astype(str).str[:4].astype(int).min()
     max_year = df['user_date'].astype(str).str[:4].astype(int).max()
     group_labels = [str(year) for year in range(min_year, max_year + 1)]
@@ -1013,20 +813,17 @@ def project_correl_page(df):
         liv_avg = loop_df['liveness'].multiply(100).mean().round(2)
         val_avg = loop_df['valence'].multiply(100).mean().round(2)
         heat_data.append([pop_avg, dnc_avg, nrg_avg, lud_avg, acs_avg, ins_avg, liv_avg, val_avg])
-        
+    
     fig = px.imshow(heat_data,
-                    labels=dict(x='Attribute', y='User Year', color='Score'),
+                    labels=dict(x='Attribute', y='User Year', color='Attr Score'),
                     x=['Popularity', 'Danceability', 'Energy', 'Loudness',
                     'Acousticness', 'Instrumentalness',
                     'Liveness', 'Valence'],
                     y=group_labels,
                     color_continuous_scale='Agsunset')
     fig.update_xaxes(side='top')
-    cols_group[1].plotly_chart(fig, use_container_width=True)
-
-    cols_group = st.beta_columns((3,7))
-    cols_group[0].title('Plot 03b: Attribute Derivatives')
-    cols_group[0].write('Here is my description. dawg.')
+    heat_cols[0].plotly_chart(fig, use_container_width=True)
+    # heat map derivative
     prct_data = []
     for i in range(1, len(heat_data)):
         row_data = []
@@ -1035,14 +832,194 @@ def project_correl_page(df):
         prct_data.append(row_data)
 
     fig = px.imshow(prct_data,
-                    labels=dict(x='Attribute', y='User Year', color='Score'),
+                    labels=dict(x='Attribute', y='User Year', color='Pct Change'),
                     x=['Popularity', 'Danceability', 'Energy', 'Loudness',
                     'Acousticness', 'Instrumentalness',
                     'Liveness', 'Valence'],
                     y=group_labels[1:],
                     color_continuous_scale='haline')
     fig.update_xaxes(side='top')
-    cols_group[1].plotly_chart(fig, use_container_width=True)
+    heat_cols[1].plotly_chart(fig, use_container_width=True)
+    ###############################################
+    st.title('Attribute Correlations Over Time')
+    with st.beta_expander('Description...'):
+        st.write('Here is a description of the grpah you are looking at.')
+    cols_group = st.beta_columns((2.4,1.2,1.8,1.8))
+    group = cols_group[0].radio(label='Group', options=['Genre', 'Time', 'Pairplot'], key='20:49_0803')
+    if 'Pairplot' in group:
+        topten_genre = list(df[df['genre'] != 'NA'].groupby('genre').size().sort_values(ascending=False)[:10].index)
+        scat_df = df[df['genre'].isin(topten_genre)]
+        scat_cols = ['popularity', 'danceability', 'energy', 'loudness', 'acousticness']
+        for col in scat_cols:
+            if col not in ['popularity', 'loudness']:
+                scat_df[col] = scat_df[col].multiply(100)
+            if col == 'loudness':
+                scat_df[col] = scat_df[col].multiply(-(100/60))
+        
+        fig = px.scatter_matrix(scat_df, dimensions=scat_cols,
+                        color='genre', color_discrete_sequence=px.colors.sequential.RdBu)
+        
+        st.plotly_chart(fig, use_container_width=True)
+    if 'Genre' in group:
+        dimension = cols_group[1].radio(label='Dimensions', options=['2D', '3D'], key='tomato1')
+        if '2D' in dimension:
+            attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
+                                                    'Acousticness', 'Liveness', 'Valence']
+            x = cols_group[2].selectbox(label='Attribute 01',
+                                        options = attributes,
+                                        key='tomato2')
+            y = cols_group[3].selectbox(label='Attribute 02',
+                                        options = attributes,
+                                        key='tomato3')
+            px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
+            px_df['loudness'] = px_df['loudness'].multiply(-100/60)
+            fig = px.scatter(px_df, x=x.lower(), y=y.lower(), color='genre')
+            st.plotly_chart(fig, use_container_width=True)
+    
+        if '3D' in dimension:
+            attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
+                                                    'Acousticness', 'Liveness', 'Valence']
+            x = cols_group[2].selectbox(label='Attribute 01',
+                                        options = attributes,
+                                        key='tomato4')
+            y = cols_group[3].selectbox(label='Attribute 02',
+                                        options = attributes,
+                                        key='tomato5')
+            px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
+            px_df['loudness'] = px_df['loudness'].multiply(-100/60)
+            px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
+            px_df['user_month'] = px_df['user_date'].astype(str).str[5:7].astype(int)
+            px_df['user_day'] = px_df['user_date'].astype(str).str[-2:].astype(int)
+            px_df['user_ym'] = px_df['user_year'] + (px_df['user_month'] / 12) + (px_df['user_day'] / 365)
+            fig = px.scatter_3d(px_df, x=x.lower(), y=y.lower(), z='user_ym', color='genre')
+            st.plotly_chart(fig, use_container_width=True)
+    if 'Time' in group:
+        dimension = cols_group[1].radio(label='Dimensions', options=['2D', '3D'], key='tomato1')
+        if '2D' in dimension:
+            attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
+                                                    'Acousticness', 'Liveness', 'Valence']
+            x = cols_group[2].selectbox(label='Attribute 01',
+                                        options = attributes,
+                                        key='tomato7')
+            y = cols_group[3].selectbox(label='Attribute 02',
+                                        options = attributes,
+                                        key='tomato8')
+            px_df = df.copy()
+            px_df['loudness'] = px_df['loudness'].multiply(-100/60)
+            px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
+            fig = px.scatter(px_df, x=x.lower(), y=y.lower(), color='user_year')
+            st.plotly_chart(fig, use_container_width=True)
+        
+        if '3D' in dimension:
+            attributes = ['Popularity', 'Danceability', 'Energy', 'Loudness', 'Instrumentalness',
+                                                    'Acousticness', 'Liveness', 'Valence']
+            x = cols_group[2].selectbox(label='Attribute 01',
+                                        options = attributes,
+                                        key='tomato9')
+            y = cols_group[3].selectbox(label='Attribute 02',
+                                        options = attributes,
+                                        key='tomato10')
+            px_df = df[(df['genre'] != 'NA') & (df['genre'].isin(top_ten_genre))].copy()
+            px_df['loudness'] = px_df['loudness'].multiply(-100/60)
+            px_df['user_year'] = px_df['user_date'].astype(str).str[:4].astype(int)
+            px_df['user_month'] = px_df['user_date'].astype(str).str[5:7].astype(int)
+            px_df['user_day'] = px_df['user_date'].astype(str).str[-2:].astype(int)
+            px_df['user_ym'] = px_df['user_year'] + (px_df['user_month'] / 12) + (px_df['user_day'] / 365)
+            fig = px.scatter_3d(px_df, x=x.lower(), y=y.lower(), z='user_ym', color='user_ym')
+            st.plotly_chart(fig, use_container_width=True)
+def project_randm_page(df):
+    idx = random.randint(0, df.shape[0])
+    idx_title = df.loc[idx,'title']
+    idx_artist = df.loc[idx,'artist']
+    idx_album = df.loc[idx,'album']
+    idx_genre = df.loc[idx,'genre']
+    idx_track_url = df.loc[idx,'track_url']
+    idx_img_url = df.loc[idx,'img_url']
+    idx_duration = df.loc[idx,'duration']
+    idx_explicit = df.loc[idx,'explicit']
+    idx_popularity = df.loc[idx,'popularity']
+    idx_artist_date = df.loc[idx,'artist_date']
+    idx_user_date = df.loc[idx,'user_date']
+    idx_user_time = df.loc[idx,'user_time']
+    idx_danceability = (df.loc[idx,'danceability'] * 100).round(2)
+    idx_energy = (df.loc[idx,'energy'] * 100).round(2)
+    idx_loudness = (df.loc[idx,'loudness'] * (-100/60)).round(2)
+    idx_acousticness = (df.loc[idx,'acousticness'] * 100).round(2)
+    idx_instrumentalness = (df.loc[idx,'instrumentalness'] * 100).round(2)
+    idx_liveness = (df.loc[idx,'liveness'] * 100).round(2)
+    idx_valence = (df.loc[idx,'valence']* 100).round(2)
+    idx_playlist = df.loc[idx,'playlist']
+
+    
+    rand_group = st.beta_columns((2.3,7,2.3))
+    with rand_group[0]:
+        st.image(idx_img_url)
+    with rand_group[1]:
+        spotify_logo = '[![this is an image link]({})]({})'.format('https://i.imgur.com/TejSfM3.png', idx_track_url)
+        youtube_logo = '[![this is an image link]({})](https://www.youtube.com/results?search_query={})'.format('https://i.imgur.com/LkMsDsO.png', '+'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
+        wikiped_logo = '[![this is an image link]({})](https://en.wikipedia.org/wiki/{})'.format('https://i.imgur.com/UIllM9Y.png', '_'.join(idx_artist.split(' ')))
+        googlee_logo = '[![this is an image link]({})](https://www.google.com/search?q={})'.format('https://i.imgur.com/SbD92XG.png', '+'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
+        twitter_logo = '[![this is an image link]({})](https://twitter.com/search?q={}&src=typed_query)'.format('https://i.imgur.com/XMNpp3p.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
+        facebok_logo = '[![this is an image link]({})](https://www.facebook.com/search/top?q={})'.format('https://i.imgur.com/kvkQy1h.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
+        redditt_logo = '[![this is an image link]({})](https://www.reddit.com/search/?q={})'.format('https://i.imgur.com/idnSbNj.png', '%20'.join(str(idx_artist + ' ' +  idx_title).split(' ')))
+        st.title(idx_title)
+        st.subheader('Explore the music...')
+        st.markdown(f"""
+            {spotify_logo}&nbsp&nbsp&nbsp&nbsp
+            {youtube_logo}&nbsp&nbsp&nbsp&nbsp
+            {wikiped_logo}&nbsp&nbsp&nbsp&nbsp
+            {googlee_logo}&nbsp&nbsp&nbsp&nbsp
+            {twitter_logo}&nbsp&nbsp&nbsp&nbsp
+            {facebok_logo}&nbsp&nbsp&nbsp&nbsp
+            {redditt_logo}
+        """)
+    rand_group[2].button('Rerun Randomization')
+
+    attributes = ['artist', 'album', 'genre', 'playlist',
+                    'artist_date', 'user_date', 'user_time', 'duration',
+                    'popularity', 'danceability', 'energy', 'loudness',
+                    'acousticness', 'instrumentalness', 'liveness', 'valence',
+                    'explicit']
+    idx_attributes = [idx_artist, idx_album, idx_genre, idx_playlist,
+                    idx_artist_date, idx_user_date, idx_user_time, idx_duration,
+                    idx_popularity, idx_danceability, idx_energy, idx_loudness,
+                    idx_acousticness, idx_instrumentalness, idx_liveness, idx_valence,
+                    idx_explicit]
+    labels = ['Artist', 'Album', 'Genre', 'Playlist',
+                'Released', 'Date Added', 'Time Added', 'Duration',
+                'Popularity', 'Danceability', 'Energy', 'Loudness',
+                'Acoustic', 'Instrumental', 'Liveness', 'Valence',
+                'Explicitness']
+
+    for i, attr, idx_attr, label in zip(range(len(attributes)), attributes, idx_attributes, labels):
+        if i % 4 == 0:
+            rand_group = st.beta_columns((1.5,2,2,1.5))
+        
+        # duration cell; sole use of `project_pretty_time`
+        if attr == 'duration':
+            rand_group[i % 4].title(label)
+            rand_group[i % 4].subheader(project_pretty_time(idx_duration))
+            rank_df = df[attr].rank(ascending=True)
+            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
+        # first row; filtered data is strictly non-numeric
+        elif attr in ['artist', 'album', 'genre', 'playlist']:
+            rand_group[i % 4].title(label)
+            rand_group[i % 4].subheader(idx_attr)
+            rand_group[i % 4].write('Count: {}'.format(df[df[attr] == idx_attr].shape[0]))
+            rank_df = df[attr].value_counts().sort_values(ascending=False).rank(method='max', ascending=False)
+            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.loc[rank_df.index == idx_attr].item())))
+        # sort ascending = True
+        elif attr in ['liveness', 'loudness', 'artist_date', 'user_date', 'user_time']:
+            rand_group[i % 4].title(label)
+            rand_group[i % 4].subheader(idx_attr)
+            rank_df = df[attr].rank(ascending=True)
+            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
+        # sort ascending = False
+        else:
+            rand_group[i % 4].title(label)
+            rand_group[i % 4].subheader(idx_attr)
+            rank_df = df[attr].rank(ascending=False)
+            rand_group[i % 4].write('Rank #{}'.format(int(rank_df.iloc[idx,])))
 def project_recomm_page(df, client_id, client_secret):
     
     st.title('Randomly Generated Recommendations')
@@ -1051,21 +1028,28 @@ def project_recomm_page(df, client_id, client_secret):
     auth_manager = SpotifyClientCredentials(client_id = client_id,
                                                     client_secret = client_secret)
     sp = spotipy.Spotify(auth_manager=auth_manager)
-    rec = sp.recommendations(seed_tracks=['https://open.spotify.com/track/3duBO7LP1cbSvnXVULMrZn?si=4b1b205e12124a9c'],
-                                limit=1, min_popularity=50)
-
     with rec_cols[0].beta_expander('Song'):
         rand_idx = np.random.randint(df.shape[0])
-        
-    
+        rec = sp.recommendations(seed_tracks=[df.iloc[rand_idx]['track_url']],
+                                    limit=1)
+        st.image(rec['tracks'][0]['album']['images'][0]['url'], use_column_width=True)
+        st.subheader(rec['tracks'][0]['name'])
+        st.write(rec['tracks'][0]['artists'][0]['name'])
     with rec_cols[1].beta_expander('Artist'):
-        st.write('hi')
-    
+        rand_idx = np.random.randint(df.shape[0])
+        rec = sp.recommendations(seed_tracks=[df.iloc[rand_idx]['track_url']],
+                                    limit=1)
+        st.image(rec['tracks'][0]['album']['images'][0]['url'], use_column_width=True)
+        st.subheader(rec['tracks'][0]['artists'][0]['name'])
     with rec_cols[2].beta_expander('Album'):
-        st.write('hi')
-    
-    with rec_cols[3].beta_expander('Album'):
-        st.write('hi')
+        rand_idx = np.random.randint(df.shape[0])
+        rec = sp.recommendations(seed_tracks=[df.iloc[rand_idx]['track_url']],
+                                    limit=1)
+        st.image(rec['tracks'][0]['album']['images'][0]['url'], use_column_width=True)
+        st.subheader(rec['tracks'][0]['album']['name'])
+        st.write(rec['tracks'][0]['artists'][0]['name'])
+    with rec_cols[3].beta_expander('Spotify Membership Code'):
+        st.image('https://s.yimg.com/ny/api/res/1.2/hJL990zXx8DAOm_ao155kw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTIwMDA7aD0xNTAw/https://s.yimg.com/uu/api/res/1.2/bCY1rmzVTO5bG8aTkWUmkw--~B/aD0xNzcyO3c9MjM2MzthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/insider_articles_922/bb5661ee1b1b1323855be3a0f95eb119')
     
     st.title('Create Your Own Recommendations')
 
@@ -1092,46 +1076,31 @@ def project_recomm_page(df, client_id, client_secret):
     
     with st.beta_expander('Customize Parameters...'):
 
-        df['danceability'] = (df['danceability']* 100).round(2)
-        df['energy'] = (df['energy']* 100).round(2)
-        df['acousticness'] = (df['acousticness']* 100).round(2)
-        df['instrumentalness'] = (df['instrumentalness']* 100).round(2)
-        df['liveness'] = (df['liveness']* 100).round(2)
-        df['valence'] = (df['valence']* 100).round(2)
-        df['loudness'] = (df['loudness'] * (-1/60)).round(2)
-        
-        genre_options = ['None']
-        for genre in sp.recommendation_genre_seeds()['genres']:
-            genre_options.append(genre.title())
+        rec_df = df.copy()
+        rec_df['danceability'] = (rec_df['danceability']* 100).round(2)
+        rec_df['energy'] = (rec_df['energy']* 100).round(2)
+        rec_df['acousticness'] = (rec_df['acousticness']* 100).round(2)
+        rec_df['instrumentalness'] = (rec_df['instrumentalness']* 100).round(2)
+        rec_df['liveness'] = (rec_df['liveness']* 100).round(2)
+        rec_df['valence'] = (rec_df['valence']* 100).round(2)
+        rec_df['loudness'] = (rec_df['loudness'] * (-100/60)).round(2)
         
         slid_group = st.beta_columns((1,0.05,1))
-
-        slid_group[0].subheader('Communal Statistic')
-        slid_group[0].write('Control communal variables that are determined by the listening of users worldwide.')
-        popu_slid = slid_group[0].slider(label='Popularity', min_value=0, max_value=100, step=1, value=(0,100))
-        # slid_group[0].subheader('Mood Parameters')
-        # #slid_group[0].write('Control variables that dictate the mood(s) you experience listening to a song.')
-        # danc_slid = slid_group[0].slider(label='Danceability', min_value=0, max_value=100, step=1, value=(0,100))
-        # ener_slid = slid_group[0].slider(label='Energy', min_value=0, max_value=100, step=1, value=(0,100))
-        # vale_slid = slid_group[0].slider(label='Valence', min_value=0, max_value=100, step=1, value=(0,100))
-        # slid_group[0].subheader('Musical Properties')
-        #slid_group[0].write('Control variables inherent to any piece of music that artists optimize throughout their songs.')
-        inst_slid = slid_group[0].slider(label='Instrumentalness', min_value=0, max_value=100, step=1, value=(0,100))
-        temp_slid = slid_group[0].slider(label='Tempo', min_value=0, max_value=300, step=1, value=(0,300))
-        # slid_group[0].subheader('Contextual Attributes')
-        # #slid_group[0].write('Control variables reliant on the atmosphere surrounding the artists performing the music you are listening to.')
-        # acou_slid = slid_group[0].slider(label='Acousticness', min_value=0, max_value=100, step=1, value=(0,100))
-        # live_slid = slid_group[0].slider(label='Liveness', min_value=0, max_value=100, step=1, value=(0,100))
+        slid_group[0].subheader('Attribute Selection')
+        slid_group[0].write('Control specific variables that define your music.')
+        option = slid_group[0].selectbox('Attribute', options=['Popularity', 'Danceability', 'Energy', 'Instrumentalness', 'Loudness', 'Acousticness', 'Liveness', 'Valence', 'Tempo'])
+        if option == 'Tempo':
+            slid = slid_group[0].slider(label='', min_value=0, max_value=300, value=(int(rec_df[option.lower()].mean() - 20), int(rec_df[option.lower()].mean() + 20)))
+        else:
+            slid = slid_group[0].slider(label='', min_value=0, max_value=100, value=(int(rec_df[option.lower()].mean() - 3), int(rec_df[option.lower()].mean() + 3)))
 
         slid_group[2].subheader('User Input')
-        user_input = slid_group[2].radio(label='', options=['Track URL', 'Artist URL', 'Genre'])
-        track_url, artist_url, genre_url = '', '', ''
+        user_input = slid_group[2].radio(label='', options=['Track URL', 'Artist URL'])
+        track_url, artist_url = None, None
         if user_input == 'Track URL':
             track_url = slid_group[2].text_input('Track URL', key='track')
         if user_input == 'Artist URL':
             artist_url = slid_group[2].text_input('Artist URL', key='artist')
-        if user_input == 'Genre':
-            genre_url = slid_group[2].selectbox(label='Select Genre', options=genre_options, key='genre')
         slid_group[2].subheader('Customize Results')
         limit = slid_group[2].slider(label='Maximum Number of Results', min_value=1, max_value=100, step=1, value=20)
         gather = slid_group[2].button('Gather Results')
@@ -1140,67 +1109,79 @@ def project_recomm_page(df, client_id, client_secret):
         
         st.subheader('Because you listened to...')
         
-        if track_url != '':
-            image = sp.track(track_url)['album']['images'][0]['url']
-            track_url = [track_url]
-            track_name = sp.track(track_url[0])['name']
-            artist_url = None
-            artist_name = sp.track(track_url[0])['artists'][0]['name']
-            genre_url = None
-            genre_name = ''
-        elif artist_url != '':
-            image = sp.artist(artist_url)['images'][0]['url']
-            track_url = None
-            track_name = ''
-            artist_url = [artist_url]
-            artist_name = sp.artist(artist_url[0])['name']
-            genre_url = None
-            genre_name = sp.artist(artist_url[0])['genres']
-        elif genre_url != 'None':
-            try:
-                genr_df = df[df['genre'] == genre_url].iloc[np.random.randint(df.shape[0])]
-                image = sp.track(genr_df['track_url'])['album']['images'][0]['url']
-                track_url = None
-                track_name = ''
-                artist_url = None
-                artist_name = ''
-                genre_url = [genre_url]
-                genre_name = genre_url[0].title()
-            except:
+        if track_url != None:
+            if track_url != '':
+                image = sp.track(track_url)['album']['images'][0]['url']
+                track_name = sp.track(track_url)['name']
+                artist_name = sp.track(track_url)['artists'][0]['name']
+                genre_name = ''
+
+                recs = sp.recommendations(seed_tracks=[track_url],
+                                        limit=limit)
+                
+                rec_cols = st.beta_columns((2,8))
+                rec_cols[0].image(image)
+                rec_cols[1].markdown(f'''
+                    Track: {track_name}
+
+                    Artist: {artist_name}
+
+                    Genre: {genre_name}
+                    ''')
+            else:
                 rand_idx = np.random.randint(df.shape[0])
-                image = 'https://i.imgur.com/m8vVWiu.jpg'
-                track_url = None
+                image = df.iloc[rand_idx]['img_url']
+                track_url = df.iloc[rand_idx]['track_url']
+                track_name = df.iloc[rand_idx]['title']
+                artist_name = df.iloc[rand_idx]['artist']
+                genre_name = df.iloc[rand_idx]['genre'].title()
+                recs = sp.recommendations(seed_tracks=[track_url],
+                                            limit=limit)
+            
+                rec_cols = st.beta_columns((2,8))
+                rec_cols[0].image(image)
+                rec_cols[1].markdown(f'''
+                    Track: {track_name}
+
+                    Artist: {artist_name}
+
+                    Genre: {genre_name}
+                    ''')
+        elif artist_url != None:
+            if artist_url != '':
+                image = sp.artist(artist_url)['images'][0]['url']
                 track_name = ''
-                artist_url = None
-                artist_name = ''
-                genre_url = [genre_url]
-                genre_name = genre_url[0].title()
-        elif (track_url == '') & (artist_url == '') & (genre_url == 'None'):
-            rand_idx = np.random.randint(df.shape[0])
-            image = df.iloc[rand_idx]['img_url']
-            track_url = [df.iloc[rand_idx]['track_url']]
-            track_name = df.iloc[rand_idx]['title']
-            artist_url = None
-            artist_name = df.iloc[rand_idx]['artist']
-            genre_url = None
-            genre_name = df.iloc[rand_idx]['genre'].title()
-        else:
-            st.error('ummmm what')
-        
-        rec_cols = st.beta_columns((2,8))
-        rec_cols[0].image(image)
-        rec_cols[1].markdown(f'''
-            Track: {track_name}
+                artist_name = sp.artist(artist_url)['name']
+                genre_name = sp.artist(artist_url)['genres'][0]
 
-            Artist: {artist_name}
+                recs = sp.recommendations(seed_artists=[artist_url],
+                                        limit=limit)
+                rec_cols = st.beta_columns((2,8))
+                rec_cols[0].image(image)
+                rec_cols[1].markdown(f'''
+                    Artist: {artist_name}
 
-            Genre: {genre_name}
-            ''')
-        
-        recs = sp.recommendations(seed_tracks=track_url,
-                                    seed_artists=artist_url,
-                                    seed_genres=genre_url,
-                                    limit=limit)
+                    Genre: {genre_name}
+                    ''')
+            else:
+                rand_idx = np.random.randint(df.shape[0])
+                image = df.iloc[rand_idx]['img_url']
+                track_url = df.iloc[rand_idx]['track_url']
+                track_name = df.iloc[rand_idx]['title']
+                artist_name = df.iloc[rand_idx]['artist']
+                genre_name = df.iloc[rand_idx]['genre'].title()
+                recs = sp.recommendations(seed_tracks=[track_url],
+                                            limit=limit)
+            
+                rec_cols = st.beta_columns((2,8))
+                rec_cols[0].image(image)
+                rec_cols[1].markdown(f'''
+                    Track: {track_name}
+
+                    Artist: {artist_name}
+
+                    Genre: {genre_name}
+                    ''')
 
         rec_lists = []
         for track in recs['tracks']:
@@ -1217,24 +1198,13 @@ def project_recomm_page(df, client_id, client_secret):
             if i % 4 == 0:
                 finaler_cols = st.beta_columns((1,1,1,1))
             finaler_cols[i % 4].image(rec_data[-1])
-            finaler_cols[i % 4].subheader('{} || {}'.format(rec_data[0], rec_data[1]))
-            finaler_cols[i % 4].markdown('''
-                    [![this is an image link]({})]({})
-                    [![this is an image link]({})](https://www.youtube.com/results?search_query={})
-                    [![this is an image link]({})](https://en.wikipedia.org/wiki/{})
-                    [![this is an image link]({})](https://www.google.com/search?q={})
-                '''.format(
-                    'https://i.imgur.com/TejSfM3.png', rec_data[2],
-                    'https://i.imgur.com/LkMsDsO.png', '+'.join(str(rec_data[1] + ' ' +  rec_data[0]).split(' ')),
-                    'https://i.imgur.com/UIllM9Y.png', '_'.join(rec_data[1].split(' ')),
-                    'https://i.imgur.com/SbD92XG.png', '+'.join(str(rec_data[1] + ' ' +  rec_data[0]).split(' '))
-                )
-            )
+            finaler_cols[i % 4].subheader(rec_data[0])
+            finaler_cols[i % 4].write(rec_data[1])
 
 def project_search_page():
     return None
 
-# PAGE CONTAINER
+# PAGE MEAT
 if ready_button:
 
     #try:
@@ -1247,64 +1217,46 @@ if ready_button:
             #try:
                 
         if len(radio_page) == 0: st.error('Please select analysis dashboard(s) in "Select Data" sidebar')
-        if 'Brief History' in radio_page: project_histry_page(f_data)
+        if 'Brief History' in radio_page:
+            st.title('Brief History Page')
+            st.markdown('''
+            Welcome to the `Spotify Analysis Dashboard` -- the application for music listeners who want to learn
+            more about their unique music trends and statistics.
+
+            In the many `Dashboard Views` of this application, you will find individual reports of your music
+            related to that dashboard's unique purpose. From analyzing your popular genres to discovering relations
+            between your playlists, you'll be able to answer almost any question about your music tendencies.
+            
+            For more details on the project, please refer to the `Resources` tab in the sidebar. Otherwise,
+            I hope you enjoy this project!
+            ''')
+            project_quick_stats(); project_histry_page(f_data)
         if 'Tracks' in radio_page: 
             st.title('Tracks Page')
             st.markdown('''
-                Welcome to the "Tracks Page", the page for anything related to the specific quirks about the
-                music you listen to.
-                
-                From learning more about a brief history of your music to your highest
-                and lowest ranking songs per attribute, this page will answer any questions you have (and
-                possibly leave you asking yourself more) about how your music ranks in comparison to itself.
+                Welcome to the `Tracks Page` -- the page for discovering the highs and lows of your individual
+                tracks. The metrics on this page are gathered by Spotify, and a more detailed description of how the
+                data is gathered for this project can be found in the `GitHub Documentation`.
             ''')
-            project_quick_stats(); project_tracks_page(f_data)
+            project_tracks_page(f_data)
         if 'Artists + Albums' in radio_page:
             st.title('Artists + Albums Page')
             st.markdown('''
-                Welcome to the "Artists + Albums Page", the page for anything related to the specific quirks about the
-                music you listen to.
-                
-                From learning more about a brief history of your music to your highest
-                and lowest ranking songs per attribute, this page will answer any questions you have (and
-                possibly leave you asking yourself more) about how your music ranks in comparison to itself.
+                Welcome to the `Artists + Albums Page` -- the page for discovering which artists have soared
+                to the top of your listening charts and by how much they stand out compared to the others.
             ''')
             project_quick_stats(); project_artist_page(f_data)
-        if 'Genre Breakdown' in radio_page: project_quick_stats(); project_genres_page()
         if 'Listening Trends' in radio_page:
             st.title('Listening Trends Page')
             st.markdown('''
-                Welcome to the "Correlation Page", a page where you can explore which musical attributes relate
-                and by how much they relate, if at all. There are two main plots, the correlation plot and the
-                pair plot. Descriptions can be found in their respective portions of the page.
+                Welcome to the `Listening Trends Page` -- the page for diving deeper into when exactly
+                and by how much your taste of music has changed over time.
 
-                If you are not familiar with correlations, correlations are defined as: "a statistical measure that
-                expresses the extent to which two variables are linearly related." Essentially, how strong is the
-                relationship between two variables and to what extent is the positivity or negativity of that relationship.
-                
-                Values closer to +1 are strongly positive correlated, meaning both variables increase together in linear fashion.
-                Values closer to -1 are strongly negatively correlated, meaning both variables decrease together in linear fashion.
-                Values closer to 0 are not correlated, meaning the change in one variable cannot explain the change in the other variable.
+                This page offers the most customization of all, so take time exploring the many unique
+                relations between all possible attributes across every genre and every year. To learn
+                more about any of the attributes, please visit the `GitHub Documentation` in the sidebar.
             ''')
-            st.write('Here is a description that I will write more of later...')
             project_quick_stats(); project_trends_page(f_data)
-        if 'Spotify Usage' in radio_page: project_quick_stats(); project_spuser_page()
-        if 'Attribute Correlations' in radio_page:
-            st.title('Attribute Correlation Page')
-            st.markdown('''
-                Welcome to the "Correlation Page", a page where you can explore which musical attributes relate
-                and by how much they relate, if at all. There are two main plots, the correlation plot and the
-                pair plot. Descriptions can be found in their respective portions of the page.
-
-                If you are not familiar with correlations, correlations are defined as: "a statistical measure that
-                expresses the extent to which two variables are linearly related." Essentially, how strong is the
-                relationship between two variables and to what extent is the positivity or negativity of that relationship.
-                
-                Values closer to +1 are strongly positive correlated, meaning both variables increase together in linear fashion.
-                Values closer to -1 are strongly negatively correlated, meaning both variables decrease together in linear fashion.
-                Values closer to 0 are not correlated, meaning the change in one variable cannot explain the change in the other variable.
-            ''')
-            project_correl_page(f_data)
         if 'Random Statistics' in radio_page: project_randm_page(f_data)
         if 'Recommendations [Beta]' in radio_page: project_recomm_page(f_data, client_id, client_secret)
                     
@@ -1313,7 +1265,6 @@ if ready_button:
 
     # except:
     #     st.error('Please select dashboard view in the "Select Data" sidebar tab.')
-
 with st.sidebar.beta_expander('Resources', False):
         st.write("[GitHub Documentation](https://github.com/lucas-nelson-uiuc/academia_epidemia/tree/main/spotipy_analysis)")
         st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
