@@ -1,5 +1,5 @@
 # WALKTHROUGH DOCUMENT
-To properly gather, view, and interact with the data necessary for `Spotify Analysis Dashboard`, please review this document.
+Please review this document to properly gather, view, and interact with the data necessary for `Spotify Analysis Dashboard`
 
 ### Table of Contents
 
