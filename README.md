@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://i.imgur.com/m1JzxX8.jpg" alt="Spotify Analysis Logo"></a>
+ <img src="https://images.prismic.io/soundcharts/727545d02420e55c5c6a376f633a1f02ebc59dc5_mapspot2.png?auto=compress,format" alt="Spotify Analysis Logo"></a>
 </p>
 
 <h3 align="center">Spotify Analysis Dashbaord</h3>
