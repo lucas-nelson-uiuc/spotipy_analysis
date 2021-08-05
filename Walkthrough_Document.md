@@ -95,13 +95,15 @@ The graphs utilized by your dashboard were made possible by [Plotly](https://plo
 Interaction with Plotly graphs go beyond visualizing data: it also means filtering, manipulating, searching, etc. This section of the document will briefly cover some of these Plotly functionalities to enhance your experience exploring your data.
 
 ### Plotly Graph Toolbar
-Each Plotly graph is equipped with the following toolbar, located in the upper right corner and activated by hovering over the graph. The purpose of these tools are to either magnify your view of the graph (zooming, full-screen), filter the data used for the graph (box-select, lasso-select), or compare data across the graph (show data on hover).
 
 ![Plotly Toolbar](https://i.imgur.com/tCqRECo.png)
+
+Each Plotly graph is equipped with the following toolbar, located in the upper right corner and activated by hovering over the graph. The purpose of these tools are to either magnify your view of the graph (zooming, full-screen), filter the data used for the graph (box-select, lasso-select), or compare data across the graph (show data on hover).
 
 Although each graph's trends can be noted easily, I recommend utilizing the full-screen option when possible to analyze individual data points more clearly.
 
 ### Plotly Graph Legends
-Plotly graphs may also be equipped with a legend as a way of further filtering data. Although its purpose is to label data, single-clicking an item will remove it from the graph and double-clicking an item will make it the only item in the graph. Filtering can be reversed by performing the action again.
 
 ![Plotly Legend](https://i.imgur.com/N8Z6Jo3.png)
+
+Plotly graphs may also be equipped with a legend as a way of further filtering data. Although its purpose is to label data, single-clicking an item will remove it from the graph and double-clicking an item will make it the only item in the graph. Filtering can be reversed by performing the action again.
