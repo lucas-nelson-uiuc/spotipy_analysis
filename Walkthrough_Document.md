@@ -71,11 +71,13 @@ Enter Input Data
         https://open.spotify.com/playlist/37i9dQZF1DX2zsdpDHp0xI
 ``` 
 ---
+---
 
 If you'd like to see your dashboard as soon as possible, you may skip the rest of the document and select `Gather DataFrame` in the `Enter Input Data` section and then further explore in the `Select Data` section.
 
 If you'd like to read more about certain individual components of the dashboard, please continue reading, although not necessary.
 
+---
 ---
 # Reviewing Your Input Data
 After gathering your input data, select `Gather DataFrame` to begin the data gathering process. Depending on the size of your playlist(s), this may take a few minutes (~380 songs per minute). This will take you to the `Data Review Screen`. At the moment, this screen will simply be the page for you to understand your data prior to analyzing your data. However, there are plans to include user input functionality that would allow the user to modify missing and mislabeled data.
