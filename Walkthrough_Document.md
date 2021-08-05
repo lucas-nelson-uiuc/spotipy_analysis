@@ -2,9 +2,11 @@
 To properly gather, view, and interact with the data necessary for `Spotify Analysis Dashboard`, please review this document.
 
 ### Table of Contents
+
 * [Generating Your Spotify Token](#Generating-Your-Spotify-Token)
 * [Gathering Your Spotify Playlist URLs](#Gathering-Your-Spotify-Playlist-URLs)
-* [Viewing Your Spotify Analysis Dashboard](#Viewing-Your-Spotify-Analysis-Dashboard)
+* [Reviewing Your Input Data](#Reviewing-Your-Input-Data)
+* [Your Unique Spotify Analysis Dashboard](#Your-Unique-Spotify-Analysis-Dashboard)
 * [Interacting with Plotly Graphs](#Interacting-with-Plotly-Graphs)
 
 ---
@@ -20,7 +22,7 @@ This section will walk you through how to generate a Spotify token by accessing 
 
 ![Descriptive Image #02](https://i.imgur.com/xWFR5Rf.png)
 
-* Enter any random `name` and `description` for your app. (These will not be used in further steps.) Afterwards, review and agree to the `Terms of License` then select `CREATE`.
+* Enter any random `name` and `description` for your app. (These will not be used in further steps.) Afterwards, review and agree to the `Terms of Service` then select `CREATE`.
 
 ![Descriptive Image #03](https://i.imgur.com/IA7bPoQ.png)
 
@@ -68,6 +70,21 @@ Enter Input Data
        https://open.spotify.com/playlist/37i9dQZF1DZ06evO3zDJMk ,
         https://open.spotify.com/playlist/37i9dQZF1DX2zsdpDHp0xI
 ``` 
+---
+
+If you'd like to see your dashboard as soon as possible, you may skip the rest of the document and select `Gather DataFrame` in the `Enter Input Data` section and then further explore in the `Select Data` section.
+
+If you'd like to read more about certain individual components of the dashboard, please continue reading, although not necessary.
+
+---
+# Reviewing Your Input Data
+After gathering your input data, select `Gather DataFrame` to begin the data gathering process. Depending on the size of your playlist(s), this may take a few minutes (~380 songs per minute). This will take you to the `Data Review Screen`. At the moment, this screen will simply be the page for you to understand your data prior to analyzing your data. However, there are plans to include user input functionality that would allow the user to modify missing and mislabeled data.
+
+---
+# Your Unique Spotify Analysis Dashboard
+The `Spotify Analysis Dashboard` comes with the following six dashboards: `Brief History`, `Track`, `Artists + Albums`, `Listening Trends`, `Random Statistics`, and `Recommendations [Beta]`. Each page has its own unique purpose, but they all sample from the same dataset provided in the `Enter Input Data` section.
+
+Most graphs follow the same format: title, description, data filtering, graph. Titles briefly mention the purpose of its section of the page. Descriptions are hidden in expanding boxes (click to open/close) and fully explain how to interact with the graph. Data filtering tools are in place to allow the user to further refine the default state of the final element, the graph. (See below for graph interaction.)
 
 ---
 # Interacting with Plotly Graphs
