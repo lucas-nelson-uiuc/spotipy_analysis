@@ -2,10 +2,10 @@
 To properly gather, view, and interact with the data necessary for `Spotify Analysis Dashboard`, please review this document.
 
 ### Table of Contents
-* [Generating Your Spotify Token](Generating-Your-Spotify-Token)
-* [Gathering Your Spotify Playlist URL(s)](Gathering-Your-Spotify-Playlist-URL(s))
-* [Viewing Your Spotify Analysis Dashboard](Viewing-Your-Spotify-Analysis-Dashboard)
-* [Interacting with Plotly Graphs](Interacting-with-Plotly-Dashboards)
+* [Generating Your Spotify Token](#Generating-Your-Spotify-Token)
+* [Gathering Your Spotify Playlist URL(s)](#Gathering-Your-Spotify-Playlist-URL(s))
+* [Viewing Your Spotify Analysis Dashboard](#Viewing-Your-Spotify-Analysis-Dashboard)
+* [Interacting with Plotly Graphs](#Interacting-with-Plotly-Dashboards)
 
 ---
 # Generating Your Spotify Token
