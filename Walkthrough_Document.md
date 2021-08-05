@@ -3,9 +3,9 @@ To properly gather, view, and interact with the data necessary for `Spotify Anal
 
 ### Table of Contents
 * [Generating Your Spotify Token](#Generating-Your-Spotify-Token)
-* [Gathering Your Spotify Playlist URL(s)](#Gathering-Your-Spotify-Playlist-URL(s))
+* [Gathering Your Spotify Playlist URLs](#Gathering-Your-Spotify-Playlist-URLs)
 * [Viewing Your Spotify Analysis Dashboard](#Viewing-Your-Spotify-Analysis-Dashboard)
-* [Interacting with Plotly Graphs](#Interacting-with-Plotly-Dashboards)
+* [Interacting with Plotly Graphs](#Interacting-with-Plotly-Graphs)
 
 ---
 # Generating Your Spotify Token
@@ -33,7 +33,7 @@ This section will walk you through how to generate a Spotify token by accessing 
 ![Descriptive Image #05](https://i.imgur.com/FgXRXEs.png)
 
 ---
-# Gathering Your Spotify Playlist URL(s)
+# Gathering Your Spotify Playlist URLs
 This section will walk you through how to gather your Spotify playlist URL(s).
 
 ### 01. Login to Spotify
