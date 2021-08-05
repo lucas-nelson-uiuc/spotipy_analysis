@@ -60,9 +60,9 @@ After pasting your `CLIENT ID`, `CLIENT SECRET`, and `Playlist URL(s)`, your `En
 ```
 Enter Input Data
 ¦   Client ID
-+---   A0****************************z9
++---   a0****************************z9
 ¦   Client Secret
-+---   b1****************************Y8
++---   b1****************************y8
 ¦   Playlist URL(s)
 +---   https://open.spotify.com/playlist/37i9dQZF1DXe8E8oqpmTDI  ,
        https://open.spotify.com/playlist/37i9dQZF1DZ06evO0ti1Ik,
