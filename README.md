@@ -15,47 +15,35 @@
 
 ---
 
-<p align = "center">💡 Various templates & tips on writing high-quality documentation that people want to read.</p>
-
 
 ## Table of Contents
 
 - [Introduction](#intro_section)
-- [Getting Started](#start_section)
-- [How to Interact with App](#interact_section)
+- [Accessing Your Dashboard](#start_section)
+- [Further Analysis](#Further-Analysis)
+- [Acknowledgements](#Acknowledgments)
+- [Project Details](#Project-Details)
 
 
 ## Introduction <a name = "intro_section"></a>
-Welcome to `spotify_analysis`, the dashboard that allows you to analyze your Spotify listening habits of the past and present.
+Welcome to `Spotify Analysis Dashboard`, the dashboard that allows you to analyze your Spotify listening habits of the past, present, and future.
 
-## Getting Started <a name = "start_section"></a>
+## Accessing Your Dashboard <a name = "start_section"></a>
 
-Before jumping into learning more about your music tastes, you must follow these steps:
+To properly utilize the app, please visit the Walkthrough Document located in this repo.
 
-- Create a [Spotify Developer account](https://developer.spotify.com/dashboard/login) using your Spotify login information
-- Select `CREATE AN APP` (enter any `name` and `description`)
-- Press `CREATE`
-- Locate `Client ID` and `Client Secret
-- Copy to `Client ID` and `Client Secret` into applicationou will miss out on a whole class of contributors
+## Further Analysis
+Disclaimer: this dashboard does not utilize real-time listening data. Statistics such as 'Top Tracks of the Week/Month/Year' are not available through this project.
 
-## How to Interact with App<a name = "interact_section"></a>
-
-User Interaction is limited to expandable boxes scattered throughout the application. Look for boxes with a plus at the right end as you navigate the dashboard to enter various input.
-
-### Enter Spotify Details
-`Client ID`: unique identifier of your application<br>
-`Client Secret`: key to pass in secure calls to the Spotify Accounts and Web API services<br>
-`Playlist URL(s)`: link(s) to public Spotify playlists; if multiple, separate links by commas
-
+Luckily, this amazing project covers that half, so please visit this page for a complementary analysis: [Stats for Spotify](https://www.statsforspotify.com/)
 
 ## Acknowledgements <a name = "acknowledgements"></a>
 
 1. [Spotipy](https://spotipy.readthedocs.io/en/2.18.0/) - Spotify API token generator and scraper
 2. [Streamlit](https://streamlit.io/) - web application platform
-
-## Other Tools
-For more listening-related statistics, visit this other cool project: [Stats for Spotify](https://www.statsforspotify.com/)
+3. [Plotly](https://plotly.com/python/) - open source graphing library
 
 ## Project Details
-Author: Lucas Nelson <br>
-Completed: 2021/07/27
+Author: Lucas Nelson
+
+Completed: 2021/08/06
