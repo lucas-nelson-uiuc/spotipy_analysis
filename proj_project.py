@@ -1,6 +1,5 @@
 import proj_pipeline
 import proj_analysis
-import proj_plot
 
 import streamlit as st
 import pandas as pd
@@ -61,6 +60,8 @@ with st.sidebar.beta_expander('Enter Input Data', True):
 
 # DATAFRAME FUNCTIONS
 radio_page = st.empty()
+submit = st.empty()
+search_filter = st.empty()
 def raw_dataframe():
     if client_id and client_secret and playlist_input and ready_button:
         
@@ -78,15 +79,18 @@ def alter_dataframe(df):
     if ready_button:
         with st.sidebar.beta_expander("Select Data", False):
             global radio_page
+            global submit
+            global search_filter
             search_filter = st.radio(label='', options=['Filter','Search'])
 
             if search_filter == 'Filter':
+                artist_year = pd.to_datetime(df['artist_date']).dt.year
                 st.subheader('Filter Parameters')
                 filter_playlist = st.multiselect('Playlist', options=list(np.sort(data['playlist'].unique())))
                 filter_release = st.slider('Release Date',
-                                            min_value=df['artist_date'].min().year,
-                                            max_value=df['artist_date'].max().year,
-                                            value = (df['artist_date'].min().year, df['artist_date'].max().year),
+                                            min_value=int(artist_year.min()),
+                                            max_value=int(artist_year.max()),
+                                            value=(int(artist_year.min()), int(artist_year.max())),
                                             step=1)
                 st.subheader('Dashboard Views')
                 radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Listening Trends', 'Random Statistics', 'Recommendations [Beta]'])
@@ -97,20 +101,35 @@ def alter_dataframe(df):
             
             if search_filter == 'Search':
                 st.subheader('Search Parameters')
-                search_song = st.text_input('Song')
-                search_artist = st.text_input('Artist')
-                search_album = st.text_input('Album')
-                search_year = st.slider('Release Date',
-                                        min_value=df['artist_date'].min().year,
-                                        max_value=df['artist_date'].max().year,
-                                        value = (df['artist_date'].min().year, df['artist_date'].max().year),
-                                        step=1)
-                st.subheader('Dashboard Views')
-                radio_page = st.selectbox(label='Select at least one', options=['Brief History', 'Tracks', 'Artists + Albums', 'Listening Trends', 'Random Statistics', 'Recommendations [Beta]'])
+                filter_by = st.radio(label='Filter by', options=['Song', 'Artist', 'Album'])
+                if filter_by == 'Song':
+                    search_song = st.selectbox('Song', sorted(df['title'].unique()))
+                    if df[df['title'] == search_song]['title'].unique().shape[0] == 1:
+                        search_artist = ''
+                        search_album = ''
+                    else:
+                        search_artist = st.selectbox('Artist', sorted(df[df['title'] == search_song]['artist'].unique()))
+                        search_album = st.selectbox('Album', sorted(df[(df['title'] == search_song) & (df['artist'] == search_artist)]['album'].unique()))
+                if filter_by == 'Artist':
+                    search_artist = st.selectbox('Artist', sorted(df['artist'].unique()))
+                    if df[df['artist'] == search_artist]['artist'].unique().shape[0] == 1:
+                        search_song = ''
+                        search_album = ''
+                    else:
+                        search_song = st.selectbox('Song', sorted(df[df['artist'] == search_artist]['title'].unique()))
+                        search_album = st.selectbox('Album', sorted(df[df['artist'] == search_artist]['album'].unique()))
+                if filter_by == 'Album':
+                    search_album = st.selectbox('Album', sorted(df['album'].unique()))
+                    if df[df['album'] == search_album]['album'].unique().shape[0] == 1:
+                        search_song = ''
+                        search_artist = ''
+                    else:
+                        search_song = ''
+                        search_artist = st.selectbox('Artist', sorted(df[df['album'] == search_album]['artist'].unique()))
                 submit = st.checkbox(label='Search')
 
                 if submit:
-                    return proj_analysis.analysis_search_dataframe(df, client_id, client_secret, search_song, search_artist, search_album, search_year)
+                    return proj_analysis.analysis_search_dataframe(df, client_id, client_secret, search_song, search_artist, search_album)
 def project_pretty_time(time):
     duration_mins = time / 60000
     hours = int(duration_mins // 60)
@@ -148,9 +167,9 @@ def project_welcm_page():
     
     data_grp[1].markdown("<h3><b>02. Manipulating Your Data</b></h3>", unsafe_allow_html=True)
     data_grp[1].markdown('''
-        Filter to include all observations that fit your criteria or search individual attributes
+        Filter to include all observations that strictly match your criteria
 
-        Both requests are limited to the data provided
+        Search to obtain statistics of an individual song, artist, or album
     ''')
     
     data_grp[2].markdown("<h3><b>03. Dashboard Interaction</b></h3>", unsafe_allow_html=True)
@@ -165,10 +184,10 @@ def project_dataq_page(r_df):
     page_cols[0].markdown('''
         This is the page to view your requested data before it is shipped off for analysis.
         You can always come back to get a second glance, or you can assume that the data gathering
-        process works perfectly all the time.
+        process works perfectly all the time
         
         However, even if you are confident the request is perfect, you might be better equipped
-        to learn more about your music taste by taking a brief glance at your unique dataset.
+        to learn more about your music taste by taking a brief glance at your unique dataset
     ''')
 
     duration = proj_analysis.analysis_pretty_time(r_df)
@@ -199,10 +218,10 @@ def project_dataq_page(r_df):
     page_cols[2].markdown('''
         Given the limitations of Spotify's API, some inaccuracies may occur,
         most commonly incorrect or broad genre labeling, imprecise artist release dates, and
-        missing data entries.
+        missing data entries
         
-        `NA` entries are accounted for by either a proxy or a zero (Spotify-generated)
-        whereas duplicate entries are reduced to the first instance.
+        `NA` entries are replaced by either a proxy or a zero whereas duplicate entries are
+        reduced to the first instance
     ''')
 
     attributes = ['popularity','danceability','energy','loudness','acousticness',
@@ -236,7 +255,7 @@ def project_dataq_page(r_df):
         *Coming soon...*
         
         Although the analyses attempt to mitigate these differences, now is your chance to label
-        data as you see best fit.
+        data as you see best fit
     ''')
 
     items = ['Enter genre for ...', 'Enter statistic for ...', 'Enter release date for ...', 'Many more ...']
@@ -575,7 +594,7 @@ def project_tracks_page(df):
                 cols_group[i % 4].write('{}'.format(df[df[attr] == min(df[attr])]['title'].iloc[0,]))
     
     # locating and creating instances for highest/lowest attribute score
-    attributes = ['popularity', 'danceability', 'energy', 'loudness', 'instrumentalness', 'acousticness', 'liveness', 'valence', 'tempo']
+    attributes = ['popularity','danceability','energy','loudness','instrumentalness','acousticness','liveness','valence','tempo']
     descriptions = [
         '''The popularity of a track is a value between 0 and 100, with 100 being the most popular.
         The popularity is calculated by algorithm and is based, in the most part, on the total
@@ -606,9 +625,7 @@ def project_tracks_page(df):
         tracks with low valence sound more negative (e.g. sad, depressed, angry).''',
         '''Overall estimated tempo of a track in beats per minute (BPM). In musical terminology,
         tempo is the speed or pace of a given piece and derives directly from the average beat
-        duration.''',
-        '''The overall estimated tempo of a track in beats per minute (BPM). In musical terminology,
-        tempo is the speed or pace of a given piece and derives directly from the average beat duration.'''
+        duration.'''
     ]
     for attr, desc in zip(attributes, descriptions):
         if attr != 'tempo':
@@ -914,7 +931,7 @@ def project_trends_page(df):
                         # vertical_spacing=0.02,
                         subplot_titles=("Attribute Score", "Percentage Change"))
 
-    colors = n_colors('rgb(0, 102, 102)', 'rgb(229, 255, 204)', 8, colortype='rgb')
+    colors = n_colors('rgb(255,102,102)', 'rgb(102,102,255)', 8, colortype='rgb')
     for i, ncolor, px_col, pct_col in zip(range(px_df.shape[1]), colors, px_df, pct_df):
         fig.add_trace(go.Scatter(x=list(px_df.index), y=px_df[px_col],
                                 name=px_col.title(),
@@ -1343,8 +1360,73 @@ def project_recomm_page(df, client_id, client_secret):
             finaler_cols[i % 4].image(rec_data[-1])
             finaler_cols[i % 4].subheader(rec_data[0])
             finaler_cols[i % 4].write(rec_data[1])
-def project_search_page():
-    st.title('IDK WHAT I\'M DOING')
+def project_search_page(s_df):
+    ### information of selection
+    images = [Image.open(requests.get(img_url, stream=True).raw) for img_url in s_df['img_url'].unique()]
+    while len(images) < 6:
+        images *= 3
+        
+    widths, heights = zip(*(i.size for i in images))
+
+    total_width = sum(widths)
+    max_height = max(heights)
+
+    new_im = Image.new('RGB', (total_width, max_height))
+    x_offset = 0
+    for im in images:
+        new_im.paste(im, (x_offset,0))
+        x_offset += im.size[0]
+
+    st.markdown(f"<h1 style=\"text-align:center;vertical-align:middle\">{s_df['artist'].values[0]}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style=\"text-align:center;vertical-align:middle\">{s_df['album'].values[0]}</h4>", unsafe_allow_html=True)
+    st.image(new_im)
+
+    ### graphs
+    # songs
+    px_df = s_df.copy()
+    attributes = ['popularity','danceability','energy','loudness','instrumentalness','acousticness','liveness','valence','tempo']
+    for i, attr in zip(range(len(attributes)), attributes):
+        if i % 2 == 0:
+            cols = st.beta_columns((1,1))
+        cols[i % 2].subheader(attr.title())
+        with cols[i % 2].beta_expander('Description...'):
+            st.write(f'''
+                This gauge represents the {attr} of the requested item. The number in the middle and green gauge bar
+                represents the average {attr} score across all observations.
+            ''')
+            st.dataframe(px_df[attr].describe())
+        
+        if attr not in ['popularity', 'loudness', 'tempo']:
+            px_df[attr] = px_df[attr].multiply(100)
+        if attr == 'loudness':
+            px_df[attr] = px_df[attr].multiply(-100/60)
+        
+        if attr == 'tempo':
+            rng = [0,300]
+        else:
+            rng = [0, 100]
+
+        tfp = px_df[attr].describe()['25%']
+        sfp = px_df[attr].describe()['75%']
+
+        fig = go.Figure(go.Indicator(
+            value = px_df[attr].mean().round(0),
+            mode = "gauge+number",
+            # title = {'text': attr},
+            # delta = {'reference': },
+            gauge = {'axis': {'range': rng},
+                    'steps' : [
+                        {'range': [tfp, sfp], 'color': "lightgreen"}]}))
+
+        fig.update_layout(autosize=False,
+                            margin=dict(
+                                l=50,
+                                r=50,
+                                b=0,
+                                t=0
+                            )
+                        )
+        cols[i % 2].plotly_chart(fig, use_container_width=True)
 
 # PAGE MEAT
 if ready_button:
@@ -1354,58 +1436,55 @@ if ready_button:
         data = retrieve_dataframe()
         f_data = alter_dataframe(data)
         
-        if not f_data.empty:
+        if (not f_data.empty) & (search_filter == 'Filter'):
             
-            try:
-                
-                if len(radio_page) == 0: st.error('Please select analysis dashboard(s) in "Select Data" sidebar')
-                if radio_page == 'Search': project_search_page()
-                if 'Brief History' in radio_page:
-                    st.title('Brief History Page')
-                    st.markdown('''
-                    Welcome to the `Brief History Page` -- the page for observing your unique music trends and statistics
-                    over the years.
+            if 'Brief History' in radio_page:
+                st.title('Brief History Page')
+                st.markdown('''
+                Welcome to the `Brief History Page` -- the page for observing your unique music trends and statistics
+                over the years.
 
-                    As the first dashboard view, take time becoming familiar with the layout and functionality of the page,
-                    as it is mirrored throughout the other dashboard views. Graph details can be found in `Description`
-                    boxes and each graph hosts interactive features for you to utilize to develop a greater understanding
-                    of the music you listen to.
-                    ''')
-                    project_histry_page(f_data)
-                if 'Tracks' in radio_page: 
-                    st.title('Tracks Page')
-                    st.markdown('''
-                        Welcome to the `Tracks Page` -- the page for discovering the highs and lows of your individual
-                        tracks. The metrics on this page are gathered by Spotify, and a more detailed description of how the
-                        data is gathered for this project can be found in the `GitHub Documentation`.
-                    ''')
-                    project_tracks_page(f_data)
-                if 'Artists + Albums' in radio_page:
-                    st.title('Artists + Albums Page')
-                    st.markdown('''
-                        Welcome to the `Artists + Albums Page` -- the page for discovering which artists have soared
-                        to the top of your listening charts and by how much they stand out compared to the others.
-                    ''')
-                    project_artist_page(f_data)
-                if 'Listening Trends' in radio_page:
-                    st.title('Listening Trends Page')
-                    st.markdown('''
-                        Welcome to the `Listening Trends Page` -- the page for diving deeper into when exactly
-                        and by how much your taste of music has changed over time.
+                As the first dashboard view, take time becoming familiar with the layout and functionality of the page,
+                as it is mirrored throughout the other dashboard views. Graph details can be found in `Description`
+                boxes and each graph hosts interactive features for you to utilize to develop a greater understanding
+                of the music you listen to.
+                ''')
+                project_histry_page(f_data)
+            if 'Tracks' in radio_page: 
+                st.title('Tracks Page')
+                st.markdown('''
+                    Welcome to the `Tracks Page` -- the page for discovering the highs and lows of your individual
+                    tracks. The metrics on this page are gathered by Spotify, and a more detailed description of how the
+                    data is gathered for this project can be found in the `GitHub Documentation`.
+                ''')
+                project_tracks_page(f_data)
+            if 'Artists + Albums' in radio_page:
+                st.title('Artists + Albums Page')
+                st.markdown('''
+                    Welcome to the `Artists + Albums Page` -- the page for discovering which artists have soared
+                    to the top of your listening charts and by how much they stand out compared to the others.
+                ''')
+                project_artist_page(f_data)
+            if 'Listening Trends' in radio_page:
+                st.title('Listening Trends Page')
+                st.markdown('''
+                    Welcome to the `Listening Trends Page` -- the page for diving deeper into when exactly
+                    and by how much your taste of music has changed over time.
 
-                        This page offers the most customization of all, so take time exploring the many unique
-                        relations between all possible attributes across every genre and every year. To learn
-                        more about any of the attributes, please visit the `GitHub Documentation` in the sidebar.
-                    ''')
-                    project_trends_page(f_data)
-                if 'Random Statistics' in radio_page: project_randm_page(f_data)
-                if 'Recommendations [Beta]' in radio_page: project_recomm_page(f_data, client_id, client_secret)
-                            
-                    # except:
-                    #     st.error('Cannot generate dashboard for requested view.')
+                    This page offers the most customization of all, so take time exploring the many unique
+                    relations between all possible attributes across every genre and every year. To learn
+                    more about any of the attributes, please visit the `GitHub Documentation` in the sidebar.
+                ''')
+                project_trends_page(f_data)
+            if 'Random Statistics' in radio_page: project_randm_page(f_data)
+            if 'Recommendations [Beta]' in radio_page: project_recomm_page(f_data, client_id, client_secret)
+                        
+                # except:
+                #     st.error('Cannot generate dashboard for requested view.')
+        
+        if (not f_data.empty) & (search_filter == 'Search'):
+            project_search_page(f_data)
 
-            except:
-                st.error('INTERACTIVE PAGE')
     except:
         project_dataq_page(raw_dataframe())
 else:

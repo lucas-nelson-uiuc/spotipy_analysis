@@ -32,8 +32,6 @@ class SpotifyUser():
 		self.client_id = client_id
 		self.client_secret = client_secret
 
-# GENRE CLASSIFICATION FUNCTION
-
 @st.cache
 def pipeline_single_spotify(spotify_user, playlist_url):
 	"""Gather spotify playlist data using user token and playlist url(s)"""
@@ -43,7 +41,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 	sp = spotipy.Spotify(auth_manager=auth_manager)
 	
 	details_labels = ['title', 'artist', 'album', 'genre', 'track_url', 'img_url', 'duration', 'explicit', 'popularity',
-					'artist_date', 'user_date', 'user_time']
+					'artist_date', 'user_date', 'user_time', 'inv_dt', 'imp_dt']
 	features_labels = ['danceability', 'energy', 'loudness', 'acousticness', 'instrumentalness',
 						'liveness', 'valence', 'tempo', 'signature']
 	track_details = []
@@ -87,17 +85,25 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 					raise DateMonthError
 				match = re.search('([0-9]{4}-[0-9]{2}-[0-9]{2})', track_added)
 				track_date = datetime.strptime(match.group(1), '%Y-%m-%d').date()
+				inv_dt = 0
+				imp_dt = 0
 			except InvalidDateError:
 				track_date = added_date
+				inv_dt = 1
+				imp_dt = 0
 			except DateYearError:
 				proxy_date = track_added + '-01-01'
 				track_date = datetime.strptime(proxy_date, '%Y-%m-%d').date()
+				inv_dt = 0
+				imp_dt = 1
 			except DateMonthError:
 				proxy_date = track_added + '-01'
 				track_date = datetime.strptime(proxy_date, '%Y-%m-%d').date()
+				inv_dt = 0
+				imp_dt = 1
 
 			track_details.append([track_title, track_artist, track_album, track_genre, track_url, track_img, track_length,
-									track_explicit, track_popularity, track_date, added_date, added_time])
+									track_explicit, track_popularity, track_date, added_date, added_time, inv_dt, imp_dt])
 		
 		# gather track features
 		for track in track_details:
@@ -134,61 +140,19 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 def pipeline_multip_spotify(spotify_user, playlist_url_string):
 	"""Recall pipeline_single_spotify until end of playlist"""
 
-	auth_manager = SpotifyClientCredentials(client_id = spotify_user.client_id,
-											client_secret = spotify_user.client_secret)
-	sp = spotipy.Spotify(auth_manager=auth_manager)
-
 	playlist_df_list = []
 	
 	for playlist_url in playlist_url_string.split(','):
-
-		tracker = 0
 		
 		try:
 			playlist_url = playlist_url.strip()
 			playlist_df_list.append(pipeline_single_spotify(spotify_user, playlist_url))
 
 		except:
-			playlist_name = sp.playlist(playlist_url)['name']
-			url_link = playlist_url_string.split(',')[tracker]
-			print(f'Sorry. Could not obtain {playlist_name}. Please ensure {url_link} entered correctly.')
-
-		tracker += 1
+			url_link = playlist_url_string.split(',')
+			print(f'Sorry. Could not obtain playlist. Please ensure {url_link} entered correctly.')
 
 	return pd.concat(playlist_df_list).drop_duplicates()
-
-@st.cache
-def pipeline_rick_roll(spotify_user):
-	"""Get rick roll'd"""
-
-	auth_manager = SpotifyClientCredentials(client_id = spotify_user.client_id,
-											client_secret = spotify_user.client_secret)
-	sp = spotipy.Spotify(auth_manager=auth_manager)
-	
-	track = sp.track('https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=c3785c9a0ab04252')
-	audio_features = sp.audio_features('https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=c3785c9a0ab04252')[0]
-
-	return pd.DataFrame({
-		'index':'INDEX',
-		'title':track['name'],
-		'artist':track['artists'][0]['name'],
-		'album':track['album']['name'],
-		'genre':'pop',
-		'url':track['external_urls']['spotify'],
-		'duration':track['duration_ms'],
-		'explicit':track['explicit'],
-		'popularity':track['popularity'],
-		'artist_date':track['album']['release_date'],
-		'danceability':audio_features['danceability'],
-		'energy':audio_features['energy'],
-		'loudness':audio_features['loudness'],
-		'acousticness':audio_features['acousticness'],
-		'instrumentalness':audio_features['instrumentalness'],
-		'liveness':audio_features['liveness'],
-		'valence':audio_features['valence'],
-		'tempo':audio_features['tempo'],
-		'signature':audio_features['time_signature']
-		}, index=['index']).reset_index(drop=True).drop(columns='index')
 
 def pipeline_select_genre(artist_genres):
 	if len(artist_genres) == 0:
@@ -217,13 +181,3 @@ def pipeline_select_genre(artist_genres):
 				return 'jazz'
 			else:
 				return artist_genres[0]
-
-# @st.cache
-# def pipeline_genres_spotify(spotify_user):
-# 	"""Retrieve 'spotify recognized' genres"""
-
-# 	auth_manager = SpotifyClientCredentials(client_id = spotify_user.client_id,
-# 											client_secret = spotify_user.client_secret)
-# 	sp = spotipy.Spotify(auth_manager=auth_manager)
-
-# 	return sp.recommendation_genre_seeds()['genres']
