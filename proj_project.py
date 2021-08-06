@@ -35,28 +35,45 @@ st.sidebar.title('Spotify Analysis Dashboard')
 
 # GATHER INPUT DATA
 with st.sidebar.beta_expander('Enter Input Data', True):
-        client_id = st.text_input('Client ID', '') # enter client_id
-        client_secret = st.text_input('Client secret', '') # enter client_secret
-        playlist_input = st.text_area('Playlist URL(s)', '') # enter playlist URL(s)
-        ready_button = st.checkbox('Gather Data Frame')
+        client_id = st.text_input('Client ID', '2da713ea3fa74b69b02a4e57dd719de1')
+        client_secret = st.text_input('Client secret', 'e46a2c2fecca41d99fbca809f191c71a')
+        playlist_input = st.text_area('Playlist URL(s)', """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
+            https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
+            https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
+            https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
+            https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
+            https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
+            https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
+            https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
+            https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
+            https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
+            https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
+            https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
+            https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
+            https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
+            https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
+            https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
+            https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
+            https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
+            https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
+        """)
+        ready_button = st.checkbox('Gather DataFrame')
 
 # DATAFRAME FUNCTIONS
 radio_page = st.empty()
-def retrieve_dataframe():
-
+def raw_dataframe():
     if client_id and client_secret and playlist_input and ready_button:
         
         user = proj_pipeline.SpotifyUser(client_id, client_secret)
         
         if len(playlist_input.split(',')) > 1:
             playlist_df = proj_pipeline.pipeline_multip_spotify(user, playlist_input)
-            playlist_df = playlist_df.drop_duplicates(subset=['title', 'artist'], keep='first').reset_index(drop=True)
-        
         else:
             playlist_df = proj_pipeline.pipeline_single_spotify(user, playlist_input)
-            playlist_df = playlist_df.drop_duplicates(subset=['title', 'artist'], keep='first').reset_index(drop=True)
-
-        return playlist_df
+    
+    return playlist_df
+def retrieve_dataframe():
+    return raw_dataframe().drop(columns=['inv_dt', 'imp_dt']).drop_duplicates(subset=['title', 'artist'], keep='first').reset_index(drop=True)
 def alter_dataframe(df):
     if ready_button:
         with st.sidebar.beta_expander("Select Data", False):
@@ -110,19 +127,44 @@ def project_pretty_time(time):
 
 # PAGE SKELETONS
 def project_welcm_page():
-    st.title('`Welcome to Spotify Analysis Dashboard...`')
     with st.sidebar.beta_expander('Resources', False):
         st.write("[GitHub Documentation](https://github.com/lucas-nelson-uiuc/academia_epidemia/tree/main/spotipy_analysis)")
         st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
         st.write("[Stats for Spotify](https://www.statsforspotify.com/)")
 
-    st.subheader('`The data hub for all your Spotify music listening`')    
+    st.markdown("<h1 style='text-align: center;'>Welcome to Spotify Analysis Dashboard</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>The data hub for all your music listening...</h2>", unsafe_allow_html=True)
+    img_cols = st.beta_columns((0.2,1,0.2))
+    img_cols[1].image('https://images.prismic.io/soundcharts/727545d02420e55c5c6a376f633a1f02ebc59dc5_mapspot2.png?auto=compress,format')
+    
+    data_grp = st.beta_columns((1,1,1))
+    data_grp[0].markdown("<h3><b>01. How to Access Your Data</b></h3>", unsafe_allow_html=True)
+    data_grp[0].markdown('''
+        Data for your dashboard is gathered by generating a Spotify token and providing playlist URLs
+
+        Visit the [`Walkthrough Document`](https://github.com/lucas-nelson-uiuc/academia_epidemia/blob/main/spotipy_analysis/WALKTHROUGH_DOCUMENT.md#Interacting-with-Plotly-Graphs)
+        to learn how to properly prepare your input data
+    ''')
+    
+    data_grp[1].markdown("<h3><b>02. Manipulating Your Data</b></h3>", unsafe_allow_html=True)
+    data_grp[1].markdown('''
+        Filter to include all observations that fit your criteria or search individual attributes
+
+        Both requests are limited to the data provided
+    ''')
+    
+    data_grp[2].markdown("<h3><b>03. Dashboard Interaction</b></h3>", unsafe_allow_html=True)
+    data_grp[2].markdown('''
+        Analyze your music listening habits of the past and present
+
+        Leverage your unique insights to develop curtailed recommendations for future listening
+    ''')
 def project_dataq_page(r_df):
     page_cols = st.beta_columns((6,4,4))
     page_cols[0].title('Gathered Data')
     page_cols[0].markdown('''
         This is the page to view your requested data before it is shipped off for analysis.
-        You can always come back to make changes, or you can assume that the data gathering
+        You can always come back to get a second glance, or you can assume that the data gathering
         process works perfectly all the time.
         
         However, even if you are confident the request is perfect, you might be better equipped
@@ -159,21 +201,19 @@ def project_dataq_page(r_df):
         most commonly incorrect or broad genre labeling, imprecise artist release dates, and
         missing data entries.
         
-        Although the analyses attempt to mitigate these differences, now is your chance to label
-        data as you see best fit.
+        `NA` entries are accounted for by either a proxy or a zero (Spotify-generated)
+        whereas duplicate entries are reduced to the first instance.
     ''')
 
     attributes = ['popularity','danceability','energy','loudness','acousticness',
             'instrumentalness','liveness','valence']
-    
-    duration = proj_analysis.analysis_pretty_time(r_df)
+    skipped = len(playlist_input.split(',')) - r_df['playlist'].unique().shape[0]
     un_gnr = r_df[r_df['genre'] == 'NA'].shape[0]
-    # almost there; naomi is cool
-    na_entr = r_df[r_df[attributes].isna()].shape[0]
-    artists = r_df['artist'].unique().shape[0]
-    albums = r_df['album'].unique().shape[0]
-    genres = r_df[r_df['genre'] != 'NA']['genre'].unique().shape[0]
-    items = [duration, un_gnr, na_entr, artists, albums, genres]
+    na_entr = r_df[r_df[attributes] == 0].notna().sum().sum()
+    dups = r_df.shape[0] - r_df.drop_duplicates(subset=['title', 'artist'], keep='first').reset_index(drop=True).shape[0]
+    inv_dt = r_df['inv_dt'].sum()
+    imp_dt = r_df['imp_dt'].sum()
+    items = [skipped, un_gnr, na_entr, dups, inv_dt, imp_dt]
     labels = ['Skipped Playlists', 'Unlabeled Genres', 'NA Entries', 'Duplicate Entries', 'Invalid Dates', 'Imprecise Dates']
 
     colors = n_colors('rgb(74,4,4)', 'rgb(223,96,96)', 6, colortype='rgb')
@@ -189,27 +229,45 @@ def project_dataq_page(r_df):
                 <h3 style="background-color:{color};color:#ffffff;border-radius:2%;">&nbsp{item}</h3>
                 <p style="background-color:{color};color:#ffffff;border-radius:2%;">&nbsp{label}</p>
                 ''', unsafe_allow_html=True)
-
+    
     cols = st.beta_columns((6,4,4))
     cols[0].title('Data Fixer')
     cols[0].markdown('''
+        *Coming soon...*
+        
         Although the analyses attempt to mitigate these differences, now is your chance to label
         data as you see best fit.
     ''')
+
+    items = ['Enter genre for ...', 'Enter statistic for ...', 'Enter release date for ...', 'Many more ...']
+    labels = ['Indie', '83.3', '2013-05-16' , 'User input here']
+    colors = n_colors('rgb(0,76,153)', 'rgb(0,128,255)', 4, colortype='rgb')
+    cols[1].title(''); cols[2].title('')
+    for i, color, item, label in zip(range(len(items)), colors, items, labels):
+        if i % 2 == 0:
+            cols[1].markdown(f'''
+                <h3 style="background-color:{color};color:#ffffff;style=padding-left:20px;">&nbsp{item}</h3>
+                <p style="background-color:{color};color:#ffffff;">&nbsp{label}</p>
+                ''', unsafe_allow_html=True)
+        if i % 2 == 1:
+            cols[2].markdown(f'''
+                <h3 style="background-color:{color};color:#ffffff;border-radius:2%;">&nbsp{item}</h3>
+                <p style="background-color:{color};color:#ffffff;border-radius:2%;">&nbsp{label}</p>
+                ''', unsafe_allow_html=True)
 def project_histry_page(df):
     st.title('Spotify Activity Over Time')
     with st.beta_expander('Description...'):
         desc_cols = st.beta_columns((1,1))
-        desc_cols[0].subheader('Percent of Total Songs by User Date Added')
-        desc_cols[0].write('Description of this section')
-        desc_cols[1].subheader('Percent of Total Songs by Release Date')
-        desc_cols[1].write('Description of this section')
-        desc_cols[0].subheader('Genre Songs by User Date Added')
-        desc_cols[0].write('Description of this section')
-        desc_cols[1].subheader('Genre Songs by Release Date')
-        desc_cols[1].write('Description of this section')
+        desc_cols[0].subheader('Total Songs by User Date Added')
+        desc_cols[0].write('Returns graph of all songs, artists, albums, and genres that were added by the user in the provided `User Year` selectbox')
+        desc_cols[1].subheader('Total Songs by Release Date')
+        desc_cols[1].write('Returns graph of all songs, artists, albums, and genres that were released by all artists in the provided `User Year` selectbox')
+        desc_cols[0].subheader('Percentage by User Date Added')
+        desc_cols[0].write('Returns graph of all songs, artists, albums, and genres as a percentage of the sum of songs, artists, albums, and genres, respectively, as a function of the provided `User Year` selectbox')
+        desc_cols[1].subheader('Percentage by Release Date')
+        desc_cols[1].write('Returns graph of all songs, artists, albums, and genres as a percentage of the sum of songs, artists, albums, and genres, respectively, as a function of the provided `User Year` selectbox')
     option_cols = st.beta_columns((1,1,1,1))
-    year = option_cols[0].selectbox('Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='13:58_0804')
+    year = option_cols[0].selectbox('User Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='13:58_0804')
     if year != 'All Years':
         genre = option_cols[1].selectbox('Genre',
                                         options=['All Genres']
@@ -342,7 +400,11 @@ def project_histry_page(df):
     # polar graph
     st.title('Taste of Music Over Time')
     with st.beta_expander('Description'):
-        st.write('explanation goes here i think...')
+        cols = st.beta_columns((1,1))
+        cols[0].subheader('Attribute Distribution')
+        cols[0].write('Distribution of Spotify-generated attributes over all songs added by the user in the provided `Year` range')
+        cols[1].subheader('Attribute Polar Plot')
+        cols[1].write('Spread of attribute scores (from 0 to 100) over all songs added by the user in the provided `Year` range and grouped by top ten artists, top ten genres, or as an average')
     options_cols = st.beta_columns((1,1))
     year = options_cols[0].selectbox('Year', options=['All Years'] + sorted(df['user_date'].astype(str).str[:4].unique()), key='15:41_0802')
     by = options_cols[1].radio('Group', options=['Artist', 'Genre', 'None'])
@@ -396,7 +458,6 @@ def project_histry_page(df):
                     template='plotly_dark')
     plot_cols = st.beta_columns((1,1))
     plot_cols[1].plotly_chart(fig, use_container_width=True)
-    #########################################################
     # violin plot
     attributes = ['popularity','danceability','energy','loudness','acousticness',
             'instrumentalness','liveness','valence']
@@ -423,7 +484,11 @@ def project_histry_page(df):
     # heat map absolute
     st.title('Change in Attribute Preferences Over Time')
     with st.beta_expander('Description'):
-        st.write('explanation goes here i think...')
+        cols = st.beta_columns((1,1))
+        cols[0].subheader('Attribute Scores per Year')
+        cols[0].write('Color coding based on attribute scores by `User Year`')
+        cols[1].subheader('Attribute Derivatives')
+        cols[1].write('Color coding based on percent change in the attribute scores of the previous `User Year`')
     heat_cols = st.beta_columns((1,1))
     
     min_year = df['user_date'].astype(str).str[:4].astype(int).min()
@@ -579,12 +644,18 @@ def project_tracks_page(df):
 def project_artist_page(df):
     st.title('Top Artists by User Date Added')
     with st.beta_expander('Description...'):
-        st.write('My description will go here sometime in the future...')
+        cols = st.beta_columns((1,1,1))
+        cols[0].subheader('Song Count')
+        cols[0].write('Filters the dataset to include all data from the top ten artists by song count')
+        cols[1].subheader('Duration')
+        cols[1].write('Filters the dataset to include all data from the top ten artists by song duration (milliseconds)')
+        cols[2].subheader('Album Count')
+        cols[2].write('Filters the dataset to include all data from the top ten artists by album count')
     temp_df = df.copy()
     temp_df['user_date']  = temp_df['user_date'].astype(str).str[:4].astype(int)
     columns = st.beta_columns((1,1))
     yr_options = ['All Years'] + [year for year in set(temp_df['user_date'])]
-    yr_slctbox = columns[0].selectbox(label='Time Interval', options=yr_options, key='time_select')
+    yr_slctbox = columns[0].selectbox(label='User Year', options=yr_options, key='time_select')
     radio = columns[1].radio(label='Parameter', options=['Song Count', 'Song Duration', 'Album Count'], key='time_radio')
     if yr_slctbox == 'All Years':
         if 'Song Count' in radio:
@@ -631,14 +702,24 @@ def project_artist_page(df):
     ####################
     st.title('Attribute Distribution by Artist')
     with st.beta_expander('Description...'):
-        st.write('Normalized values. Why?')
+        cols = st.beta_columns((1.5,3))
+        cols[0].subheader('Parameters')
+        cols[0].write('Similar filtering capabilities to previous graph.')
+        cols[1].subheader('Interpretation')
+        cols[1].write('''
+            Assuming each artist obtained the same value for the specified parameter, this is how their attribute distributions
+            would compare to one another.
+            
+            Although there are not labels on the x-axis denoting what the colors mean, the labels
+            and their corresponding values can be found in the dataframe box just above the graph.
+        ''')
     attributes = ['popularity', 'danceability', 'energy', 'loudness', 'instrumentalness', 'acousticness', 'liveness', 'valence']
 
     temp_df = df[attributes + ['title', 'artist', 'user_date', 'duration', 'album']].copy()
     temp_df['user_date']  = temp_df['user_date'].astype(str).str[:4].astype(int)
     columns = st.beta_columns((1,1))
     yr_options = ['All Years'] + [year for year in set(temp_df['user_date'])]
-    yr_slctbox = columns[0].selectbox(label='Time Interval', options=yr_options, key='keytime')
+    yr_slctbox = columns[0].selectbox(label='User Year', options=yr_options, key='keytime')
     radio = columns[1].radio(label='Parameter', options=['Song Count', 'Song Duration', 'Album Count'], key='keytime2')
     if yr_slctbox == 'All Years':
         if 'Song Count' in radio:
@@ -734,7 +815,15 @@ def project_artist_page(df):
     ####################
     st.title('Artist Album Workshop')
     with st.beta_expander('Description...'):
-        st.write('LOOK AT ALL THE FUN SHIT YOU CAN DO!!')
+        st.write('''
+            At its core, music is a form of art. However, one medium of the art that often goes overlooked is the album
+            cover that artists use as a symbol of their music.
+
+            This neat feature allows you to not only explore the art that artists attach to their music but also alter
+            various features to derive a piece of art that the artist may have considered otherwise.
+            
+            At the end of the day, it's just a little fun to have while learning more about your taste of music.
+        ''')
     
     wksp = st.beta_columns((1,2))
     filters = ['RGB Inverse', 'Blur', 'Contour', 'Detail', 'Edges', 'Enhance', 'Enhance+', 'Emboss', 'Smooth', 'Smooth+', 'Sharpen']
@@ -755,55 +844,55 @@ def project_artist_page(df):
             album = wksp[1].selectbox('Album', options=list(art_df['album'].unique()), key='it_is_2:05_dude')
             img_list.append(img_url)
 
-    wksp = st.beta_columns((1,1,0.5))
+    wksp = st.beta_columns((1,1))
     if option == 'RGB Inverse':
         image = Image.open(requests.get(img_list[0], stream=True).raw)
-        wksp[0].subheader('Before')
+        wksp[0].subheader('Before Operation')
         wksp[0].image(image)
         r, g, b = image.split()
         image = Image.merge("RGB", (b, g, r))
-        wksp[1].subheader('After')
+        wksp[1].subheader('After Operation')
         wksp[1].image(image)
     if option == 'Blur':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(BLUR))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(BLUR))
     if option == 'Contour':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(CONTOUR))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(CONTOUR))
     if option == 'Detail':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(DETAIL))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(DETAIL))
     if option == 'Edges':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(FIND_EDGES))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(FIND_EDGES))
     if option == 'Enhance':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(EDGE_ENHANCE))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(EDGE_ENHANCE))
     if option == 'Enhance+':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(EDGE_ENHANCE_MORE))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(EDGE_ENHANCE_MORE))
     if option == 'Emboss':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(EMBOSS))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(EMBOSS))
     if option == 'Smooth':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(SMOOTH))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(SMOOTH))
     if option == 'Smooth+':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(SMOOTH_MORE))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(SMOOTH_MORE))
     if option == 'Sharpen':
         image = Image.open(requests.get(img_url, stream=True).raw)
-        wksp[0].subheader('Before'); wksp[0].image(image)
-        wksp[1].subheader('After'); wksp[1].image(image.filter(SHARPEN))
+        wksp[0].subheader('Before Operation'); wksp[0].image(image)
+        wksp[1].subheader('After Operation'); wksp[1].image(image.filter(SHARPEN))
 def project_trends_page(df):
     ##############################################
     st.title('Attribute Trends Over Time')
@@ -857,7 +946,7 @@ def project_trends_page(df):
     if attr != 'None':
         attr_slid = cols_group[3].slider('Fixed Range', 0, 100, (0,100))
     if attr == 'None':
-        attr_slid = cols_group[3].error('Showing all attributes')
+        attr_slid = cols_group[3].info('No fixed attribute')
     
     px_df = df[df['genre'] != 'NA'][attributes].copy()
     for col in px_df:
@@ -1144,9 +1233,9 @@ def project_recomm_page(df, client_id, client_secret):
         slid_group[0].write('Control specific variables that define your music.')
         option = slid_group[0].selectbox('Attribute', options=['Popularity', 'Danceability', 'Energy', 'Instrumentalness', 'Loudness', 'Acousticness', 'Liveness', 'Valence', 'Tempo'])
         if option == 'Tempo':
-            slid = slid_group[0].slider(label='', min_value=0, max_value=300, value=(int(rec_df[option.lower()].mean() - 20), int(rec_df[option.lower()].mean() + 20)))
+            slid = slid_group[0].slider(label='', min_value=0, max_value=300, value=(int(rec_df[option.lower()].mean() - 10), int(rec_df[option.lower()].mean() + 10)))
         else:
-            slid = slid_group[0].slider(label='', min_value=0, max_value=100, value=(int(rec_df[option.lower()].mean() - 3), int(rec_df[option.lower()].mean() + 3)))
+            slid = slid_group[0].slider(label='', min_value=0, max_value=100, value=(max(0, int(rec_df[option.lower()].mean() - 10)), min(100, int(rec_df[option.lower()].mean() + 10))))
 
         slid_group[2].subheader('User Input')
         user_input = slid_group[2].radio(label='', options=['Track URL', 'Artist URL'])
@@ -1255,7 +1344,7 @@ def project_recomm_page(df, client_id, client_secret):
             finaler_cols[i % 4].subheader(rec_data[0])
             finaler_cols[i % 4].write(rec_data[1])
 def project_search_page():
-    return None
+    st.title('IDK WHAT I\'M DOING')
 
 # PAGE MEAT
 if ready_button:
@@ -1270,18 +1359,17 @@ if ready_button:
             try:
                 
                 if len(radio_page) == 0: st.error('Please select analysis dashboard(s) in "Select Data" sidebar')
+                if radio_page == 'Search': project_search_page()
                 if 'Brief History' in radio_page:
                     st.title('Brief History Page')
                     st.markdown('''
-                    Welcome to the `Spotify Analysis Dashboard` -- the application for music listeners who want to learn
-                    more about their unique music trends and statistics.
+                    Welcome to the `Brief History Page` -- the page for observing your unique music trends and statistics
+                    over the years.
 
-                    In the many `Dashboard Views` of this application, you will find individual reports of your music
-                    related to that dashboard's unique purpose. From analyzing your popular genres to discovering relations
-                    between your playlists, you'll be able to answer almost any question about your music tendencies.
-                    
-                    For more details on the project, please refer to the `Resources` tab in the sidebar. Otherwise,
-                    I hope you enjoy this project!
+                    As the first dashboard view, take time becoming familiar with the layout and functionality of the page,
+                    as it is mirrored throughout the other dashboard views. Graph details can be found in `Description`
+                    boxes and each graph hosts interactive features for you to utilize to develop a greater understanding
+                    of the music you listen to.
                     ''')
                     project_histry_page(f_data)
                 if 'Tracks' in radio_page: 
@@ -1319,6 +1407,6 @@ if ready_button:
             except:
                 st.error('INTERACTIVE PAGE')
     except:
-        project_dataq_page(retrieve_dataframe())
+        project_dataq_page(raw_dataframe())
 else:
     project_welcm_page()
