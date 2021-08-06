@@ -9,14 +9,12 @@ import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots 
 from plotly.colors import n_colors  
-import matplotlib.pyplot as plt
-import seaborn as sns
+import requests
 from PIL import Image, ImageFilter
 from PIL.ImageFilter import (
    BLUR, CONTOUR, DETAIL, EDGE_ENHANCE, EDGE_ENHANCE_MORE,
    EMBOSS, FIND_EDGES, SMOOTH, SMOOTH_MORE, SHARPEN
 )
-import requests
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
@@ -34,9 +32,28 @@ st.sidebar.title('Spotify Analysis Dashboard')
 
 # GATHER INPUT DATA
 with st.sidebar.beta_expander('Enter Input Data', True):
-        client_id = st.text_input('Client ID', '') #enter client_id
-        client_secret = st.text_input('Client secret', '') #enter client_id
-        playlist_input = st.text_area('Playlist URL(s)', '') #enter playlist URL(s)
+        client_id = st.text_input('Client ID', '2da713ea3fa74b69b02a4e57dd719de1')
+        client_secret = st.text_input('Client secret', 'e46a2c2fecca41d99fbca809f191c71a')
+        playlist_input = st.text_area('Playlist URL(s)', """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
+            https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
+            https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
+            https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
+            https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
+            https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
+            https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
+            https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
+            https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
+            https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
+            https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
+            https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
+            https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
+            https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
+            https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
+            https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
+            https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
+            https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
+            https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
+        """)
         ready_button = st.checkbox('Gather DataFrame')
 
 # DATAFRAME FUNCTIONS
