@@ -36,16 +36,34 @@ st.sidebar.title('Spotify Analysis Dashboard')
 with st.sidebar.beta_expander('Enter Input Data', True):
     client_id = st.text_input(
                                 'Client ID',
-                                '' #ENTER CLIENT_ID HERE
+                                '2da713ea3fa74b69b02a4e57dd719de1'
                                 )
     client_secret = st.text_input(
                                 'Client secret',
-                                '' #ENTER CLIENT_SECRET HERE
+                                'e46a2c2fecca41d99fbca809f191c71a'
                                 )
     playlist_input = st.text_area(
-                                 'Playlist URL(s)',
-                                 '' #ENTER PLAYLIST URL(s) HERE
-                                 )
+        'Playlist URL(s)',
+        """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
+        https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
+        https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
+        https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
+        https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
+        https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
+        https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
+        https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
+        https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
+        https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
+        https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
+        https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
+        https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
+        https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
+        https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
+        https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
+        https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
+        https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
+        https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
+        """)
     ready_button = st.checkbox('Gather DataFrame')
 
 
@@ -56,6 +74,20 @@ search_filter = st.empty()
 
 
 def raw_dataframe():
+    '''
+    Gather RAW dataframe using user input from sidebar configuration;
+    raw due to intentional lack of cleaning, done to catch faulty
+    data that is later reported to user
+
+    Parameters:
+        || NONE ||
+    
+    Returns:
+        || playlist_df (pd.DataFrame) ||
+            dataframe containing various labels and statistics
+            related to obtainable observations
+    '''
+    
     if client_id and client_secret and playlist_input and ready_button:
 
         user = proj_pipeline.SpotifyUser(client_id, client_secret)
@@ -69,6 +101,19 @@ def raw_dataframe():
 
 
 def retrieve_dataframe():
+    '''
+    Cleans raw dataframe; drops unnecessary columns,
+    preserves first instance of duplicates, and resets index
+
+    Parameters:
+        || NONE ||
+    
+    Returns:
+        || _ (pd.DataFrame) ||
+            dataframe containing various labels and statistics
+            related to obtainable observations ready for filtering
+    '''
+
     return raw_dataframe(
             ).drop(columns=['inv_dt', 'imp_dt']
             ).drop_duplicates(subset=['title', 'artist'], keep='first'
@@ -76,6 +121,20 @@ def retrieve_dataframe():
 
 
 def alter_dataframe(df):
+    '''
+    Returns dataframe ready for analysis
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            cleaned dataframe derived from previous function
+            retrieve_dataframe()
+    
+    Returns:
+        || _ (pd.DataFrame) ||
+            dataframe containing various labels and statistics
+            related to obtainable observations ready for analysis
+    '''
+    
     if ready_button:
         with st.sidebar.beta_expander("Select Data", False):
             global radio_page
@@ -141,6 +200,18 @@ def alter_dataframe(df):
 
 
 def project_pretty_time(time):
+    '''
+    Converts milliseconds to {}h{}m{}s time format
+
+    Parameters:
+        || time (np.ndarray) ||
+            array containing duration of song in milliseconds
+    
+    Returns:
+        || _ (string) ||
+            string denoting sum of time in user readable manner
+    '''
+    
     duration_mins = time / 60000
     hours = int(duration_mins // 60)
     minutes = int(((duration_mins / 60) - hours) * 60)
@@ -157,6 +228,17 @@ def project_pretty_time(time):
 
 # PAGE SKELETONS
 def project_welcm_page():
+    '''
+    Welcome page for Spotify Analysis Dashboard
+
+    Parameters:
+        || NONE ||
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+    
     with st.sidebar.beta_expander('Resources', False):
         st.write("[GitHub Documentation](https://github.com/lucas-nelson-uiuc/academia_epidemia/tree/main/spotipy_analysis)")
         st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
@@ -192,6 +274,20 @@ def project_welcm_page():
 
 
 def project_dataq_page(r_df):
+    '''
+    Data review page for Spotify Analysis Dashboard
+
+    Parameters:
+        || r_df (pd.DataFrame) ||
+            raw dataframe, used for relaying raw data to user
+            prior to analysis - mainly a way for the user to
+            review what data, if any, is faulty
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+    
     page_cols = st.beta_columns((6,4,4))
     page_cols[0].title('Gathered Data')
     page_cols[0].markdown('''
@@ -291,6 +387,18 @@ def project_dataq_page(r_df):
 
 
 def project_histry_page(df):
+    '''
+    Brief History page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+    
     st.title('Spotify Activity Over Time')
     with st.beta_expander('Description...'):
         desc_cols = st.beta_columns((1,1))
@@ -596,6 +704,17 @@ def project_histry_page(df):
 
 
 def project_tracks_page(df):
+    '''
+    Tracks page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
 
     # data transformations
     for col in df.columns:
@@ -703,6 +822,18 @@ def project_tracks_page(df):
 
 
 def project_artist_page(df):
+    '''
+    Artis + Albums page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+    
     st.title('Top Artists by User Date Added')
     with st.beta_expander('Description...'):
         cols = st.beta_columns((1,1,1))
@@ -962,7 +1093,18 @@ def project_artist_page(df):
 
 
 def project_trends_page(df):
-    ##############################################
+    '''
+    Listening Trends page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+
     st.title('Attribute Trends Over Time')
     with st.beta_expander('Description...'):
         st.write('Here is a description of the grpah you are looking at.')
@@ -1141,6 +1283,18 @@ def project_trends_page(df):
 
 
 def project_randm_page(df):
+    '''
+    Random Statistics page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+    
     idx = random.randint(0, df.shape[0])
     idx_title = df.loc[idx, 'title']
     idx_artist = df.loc[idx, 'artist']
@@ -1236,6 +1390,17 @@ def project_randm_page(df):
 
 
 def project_recomm_page(df, client_id, client_secret):
+    '''
+    Recommendations page for Spotify Analysis Dashboard
+
+    Parameters:
+        || df (pd.DataFrame) ||
+            clean dataframe used for analysis
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
 
     st.title('Randomly Generated Recommendations')
     rec_cols = st.beta_columns((1,1,1,1))
@@ -1418,7 +1583,20 @@ def project_recomm_page(df, client_id, client_secret):
 
 
 def project_search_page(s_df):
-    ### information of selection
+    '''
+    Search page for Spotify Analysis Dashboard
+
+    Parameters:
+        || s_df (pd.DataFrame) ||
+            search dataframe, similar to clean dataframe
+            except it returns all observations that match
+            one song/artist/album
+    
+    Returns:
+        || _ (streamlit) ||
+            various UI objects for user to interact with
+    '''
+
     images = [Image.open(requests.get(img_url, stream=True).raw) for img_url in s_df['img_url'].unique()]
     while len(images) < 6:
         images *= 3
