@@ -47,3 +47,5 @@ Luckily, this amazing project covers that half, so please visit this page for a 
 Author: Lucas Nelson
 
 Completed: 2021/08/06
+
+License: MIT License
