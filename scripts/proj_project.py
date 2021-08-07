@@ -36,34 +36,16 @@ st.sidebar.title('Spotify Analysis Dashboard')
 with st.sidebar.beta_expander('Enter Input Data', True):
     client_id = st.text_input(
                                 'Client ID',
-                                '2da713ea3fa74b69b02a4e57dd719de1'
+                                '' #ENTER CLIENT_ID HERE
                                 )
     client_secret = st.text_input(
                                 'Client secret',
-                                'e46a2c2fecca41d99fbca809f191c71a'
+                                '' #ENTER CLIENT_SECRET HERE
                                 )
     playlist_input = st.text_area(
-        'Playlist URL(s)',
-        """https://open.spotify.com/playlist/2peFCkryOU68kcEueeBmcw,
-        https://open.spotify.com/playlist/4gRAQPeK0VBqua9EVCk83i,
-        https://open.spotify.com/playlist/24fobBkjvpmwUL6M55Ls41,
-        https://open.spotify.com/playlist/7fzOIIrfWEifFp64mZr0Fp,
-        https://open.spotify.com/playlist/4ruz6qz9UaJi0Uh9aXWd4e,
-        https://open.spotify.com/playlist/1EffEt6r2PZiNoqJPBa53S,
-        https://open.spotify.com/playlist/3PFpKt44V2PP5IvNqCn1ly,
-        https://open.spotify.com/playlist/2dijCoBx6ktdHC7OjERJHD,
-        https://open.spotify.com/playlist/4r3lbgLtB6OflmHdNAeFWt,
-        https://open.spotify.com/playlist/55mC6DTHx1jWpHUfXpUaUC,
-        https://open.spotify.com/playlist/4I9peD1SiBDaBhKsDNa4yg,
-        https://open.spotify.com/playlist/3Whz31feyEWBBJ1bgubprI,
-        https://open.spotify.com/playlist/0QPTp6QO7mt3icX7NiFax6,
-        https://open.spotify.com/playlist/57Q4NLC64QOuJcqzzvAioi,
-        https://open.spotify.com/playlist/2CcSamqgDw8BzN0RJp7qGA,
-        https://open.spotify.com/playlist/45ZeJcyQ9oEIf4Eo9aJ4Bt,
-        https://open.spotify.com/playlist/2JUdrxncd30zv3VRJkLaZS,
-        https://open.spotify.com/playlist/5mNmEqtjAnqjXaVFkNZ5ET,
-        https://open.spotify.com/playlist/3DInsqW7PC1gDisXkIV22x
-        """)
+                                 'Playlist URL(s)',
+                                 '' #ENTER PLAYLIST URL(s) HERE
+                                 )
     ready_button = st.checkbox('Gather DataFrame')
 
 
