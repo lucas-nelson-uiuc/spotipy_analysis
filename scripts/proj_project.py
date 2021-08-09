@@ -39,7 +39,7 @@ with st.sidebar.beta_expander('Enter Input Data', True):
                                 '' #enter client_id here
                                 )
     client_secret = st.text_input(
-                                'Client secret',
+                                'Client Secret',
                                 '' #enter client_secret here
                                 )
     playlist_input = st.text_area(
