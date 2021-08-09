@@ -222,7 +222,7 @@ def project_welcm_page():
     '''
     
     with st.sidebar.beta_expander('Resources', False):
-        st.write("[GitHub Documentation](https://github.com/lucas-nelson-uiuc/academia_epidemia/tree/main/spotipy_analysis)")
+        st.write("[GitHub Documentation](https://github.com/lucas-nelson-uiuc/spotipy_analysis)")
         st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
         st.write("[Stats for Spotify](https://www.statsforspotify.com/)")
 
@@ -236,7 +236,7 @@ def project_welcm_page():
     data_grp[0].markdown('''
         Data for your dashboard is gathered by generating a Spotify token and providing playlist URLs
 
-        Visit the [`Walkthrough Document`](https://github.com/lucas-nelson-uiuc/academia_epidemia/blob/main/spotipy_analysis/WALKTHROUGH_DOCUMENT.md#Interacting-with-Plotly-Graphs)
+        Visit the [`Walkthrough Document`](https://github.com/lucas-nelson-uiuc/spotipy_analysis/blob/main/docs/walk_through.md)
         to learn how to properly prepare your input data
     ''')
 
