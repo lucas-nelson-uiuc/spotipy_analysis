@@ -22,7 +22,7 @@ import spotipy.oauth2 as oauth2
 
 # THEME SETTINGS
 st.set_page_config(
-                    page_title='Spotify Analysis Dashboard',
+                    page_title='Spotipy Analysis Dashboard',
                     page_icon=Image.open(requests.get('https://i.imgur.com/vbzB30k.png', stream=True).raw),
                     layout='wide'
                     )
@@ -30,7 +30,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
 
 # TITLE SECTION
-st.sidebar.title('Spotify Analysis Dashboard')
+st.sidebar.title('Spotipy Analysis Dashboard')
 
 # GATHER INPUT DATA
 with st.sidebar.beta_expander('Enter Input Data', True):
@@ -211,7 +211,7 @@ def project_pretty_time(time):
 # PAGE SKELETONS
 def project_welcm_page():
     '''
-    Welcome page for Spotify Analysis Dashboard
+    Welcome page for Spotipy Analysis Dashboard
 
     Parameters:
         || NONE ||
@@ -226,7 +226,7 @@ def project_welcm_page():
         st.write("[Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)")
         st.write("[Stats for Spotify](https://www.statsforspotify.com/)")
 
-    st.markdown("<h1 style='text-align: center;'>Welcome to Spotify Analysis Dashboard</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Welcome to Spotipy Analysis Dashboard</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center;'>The data hub for all your music listening...</h2>", unsafe_allow_html=True)
     img_cols = st.beta_columns((0.2,1,0.2))
     img_cols[1].image('https://images.prismic.io/soundcharts/727545d02420e55c5c6a376f633a1f02ebc59dc5_mapspot2.png?auto=compress,format')
@@ -257,7 +257,7 @@ def project_welcm_page():
 
 def project_dataq_page(r_df):
     '''
-    Data review page for Spotify Analysis Dashboard
+    Data review page for Spotipy Analysis Dashboard
 
     Parameters:
         || r_df (pd.DataFrame) ||
@@ -370,7 +370,7 @@ def project_dataq_page(r_df):
 
 def project_histry_page(df):
     '''
-    Brief History page for Spotify Analysis Dashboard
+    Brief History page for Spotipy Analysis Dashboard
 
     Parameters:
         || df (pd.DataFrame) ||
@@ -687,7 +687,7 @@ def project_histry_page(df):
 
 def project_tracks_page(df):
     '''
-    Tracks page for Spotify Analysis Dashboard
+    Tracks page for Spotipy Analysis Dashboard
 
     Parameters:
         || df (pd.DataFrame) ||
@@ -1076,7 +1076,7 @@ def project_artist_page(df):
 
 def project_trends_page(df):
     '''
-    Listening Trends page for Spotify Analysis Dashboard
+    Listening Trends page for Spotipy Analysis Dashboard
 
     Parameters:
         || df (pd.DataFrame) ||
@@ -1373,7 +1373,7 @@ def project_randm_page(df):
 
 def project_recomm_page(df, client_id, client_secret):
     '''
-    Recommendations page for Spotify Analysis Dashboard
+    Recommendations page for Spotipy Analysis Dashboard
 
     Parameters:
         || df (pd.DataFrame) ||
@@ -1566,7 +1566,7 @@ def project_recomm_page(df, client_id, client_secret):
 
 def project_search_page(s_df):
     '''
-    Search page for Spotify Analysis Dashboard
+    Search page for Spotipy Analysis Dashboard
 
     Parameters:
         || s_df (pd.DataFrame) ||
