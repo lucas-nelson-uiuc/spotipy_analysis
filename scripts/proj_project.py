@@ -23,7 +23,7 @@ import spotipy.oauth2 as oauth2
 # THEME SETTINGS
 st.set_page_config(
                     page_title='Spotify Analysis Dashboard',
-                    page_icon=Image.open('logo.png'),
+                    page_icon=Image.open('https://i.imgur.com/vbzB30k.png'),
                     layout='wide'
                     )
 st.set_option('deprecation.showPyplotGlobalUse', False)
