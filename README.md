@@ -2,7 +2,7 @@
  <img src="https://images.prismic.io/soundcharts/727545d02420e55c5c6a376f633a1f02ebc59dc5_mapspot2.png?auto=compress,format" alt="Spotify Analysis Logo"></a>
 </p>
 
-<h3 align="center">Spotify Analysis Dashbaord</h3>
+<h3 align="center">Spotipy Analysis Dashbaord</h3>
 
 <div align="center">
 
@@ -26,14 +26,14 @@
 
 
 ## Introduction <a name = "intro_section"></a>
-Welcome to `Spotify Analysis Dashboard`, the dashboard that allows you to analyze your Spotify listening habits of the past, present, and future.
+Welcome to `Spotipy Analysis Dashboard`, the dashboard that allows you to analyze your Spotify listening habits of the past, present, and future.
 
 ## Accessing Your Dashboard <a name = "start_section"></a>
 
 To properly utilize the app, please visit the Walkthrough Document located in this repo.
 
 ## Further Analysis
-Disclaimer: this dashboard does not utilize real-time listening data. Statistics such as 'Top Tracks of the Week/Month/Year' are not available through this project.
+This dashboard does not utilize real-time listening data. Statistics such as 'Top Tracks of the Week/Month/Year' are not available through this project.
 
 Luckily, this amazing project covers that half, so please visit this page for a complementary analysis: [Stats for Spotify](https://www.statsforspotify.com/)
 
