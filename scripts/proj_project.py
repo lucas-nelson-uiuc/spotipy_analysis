@@ -2,7 +2,6 @@ import proj_pipeline
 import proj_analysis
 
 import streamlit as st
-import streamlit_analytics
 import pandas as pd
 import numpy as np
 import random
@@ -33,7 +32,6 @@ st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', uns
 # TITLE SECTION
 st.sidebar.title('Spotipy Analysis Dashboard')
 
-streamlit_analytics.start_tracking()
 # GATHER INPUT DATA
 with st.sidebar.beta_expander('Enter Input Data', True):
     client_id = st.text_input(
@@ -1707,4 +1705,3 @@ if ready_button:
 else:
     project_welcm_page()
 
-streamlit_analytics.stop_tracking()
