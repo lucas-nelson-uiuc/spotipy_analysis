@@ -1,13 +1,13 @@
-![newer Text](https://media.giphy.com/media/wl5eQctHnu3cfe8XQB/giphy.gif)
+![newer Text](https://media.giphy.com/media/I3Z44JWpbVpeK5Nl0y/giphy.gif)
 
 # Page Content
 
-## Tracks Highs-and-Lows
+## Random Track
 
-Returns grid-like structure of tracks that possess a certain property relative to one another. Categories include: `Longest/Shortest Track`, `Oldest/Youngest Track`, `Track Added Most/Least Recently`, and `Track Added Earliest/Latest in Day`.
+Returns randomly generated track along with various links that can be used to further explore the track/artist. `Rerurn Randomization` button will repeat the process and return another randomly generated song.
 
 ---
 
-## Attributes Highs-and-Lows
+## Random Track Statistics
 
-Returns two-column objects: left column contains a description, ranking, and distribution plot of the respective attribute, right column contains the two tracks that hold the highest and lowest score of the respective attribute.
+Returns grid-like structure containing an array of statistics related to the track. Within some statistics, the number of occurrences of said track or any of its attributes is included. Within all statistics, a rank of the statistic relative to its group is included.
