@@ -1,13 +1,21 @@
-![hey Text](https://media.giphy.com/media/wl5eQctHnu3cfe8XQB/giphy.gif)
+![hey Text](https://media.giphy.com/media/X9P2aNxH2OOewR1YNw/giphy.gif)
 
 # Page Content
 
-## Tracks Highs-and-Lows
+## Randomly Generated Recommendations
 
-Returns grid-like structure of tracks that possess a certain property relative to one another. Categories include: `Longest/Shortest Track`, `Oldest/Youngest Track`, `Track Added Most/Least Recently`, and `Track Added Earliest/Latest in Day`.
+Returns randomly generated song, artist, and album with a surprise Spotify membership code in the right-most container.
 
 ---
 
-## Attributes Highs-and-Lows
+## Create Your Own Recommendations
 
-Returns two-column objects: left column contains a description, ranking, and distribution plot of the respective attribute, right column contains the two tracks that hold the highest and lowest score of the respective attribute.
+### Parameters
+Here you can tweak specific attributes to find music that falls within the range of the specified minimum and maximum values per parameter.
+
+If you do not adjust the values, recommendations will be generated within a +/- 10 range of your average value for the specific parameter.
+
+### User Input
+Here you can enter a specific track (URL), artist (URL), or genre (based on Spotify's list of recognized genres) to specify your recommendation futher.
+
+These parameters do not need to be from any of the playlists you have entered in the sidebar and will generate a list of recommended songs based on your desired maximum number of results.
