@@ -1089,7 +1089,11 @@ def project_trends_page(df):
 
     st.title('Attribute Trends Over Time')
     with st.beta_expander('Description...'):
-        st.write('Here is a description of the grpah you are looking at.')
+        desc_cols = st.beta_columns((1,1))
+        desc_cols[0].subheader('Attribute Score')
+        desc_cols[0].write('Returns graph of individual line plots representing various attributes and their scores per `User Year`')
+        desc_cols[1].subheader('Percentage Change')
+        desc_cols[1].write('Returns graph of bars representing the percent change per attribute from the previous `User Year`')
 
     px_df = df.copy()
     px_df['user_date'] = px_df['user_date'].astype(str).str[:4]
@@ -1125,7 +1129,11 @@ def project_trends_page(df):
     ##############################################
     st.title('Attribute Distributions Over Time')
     with st.beta_expander('Description...'):
-        st.write('description goes here boss...')
+        desc_cols = st.beta_columns((1,1))
+        desc_cols[0].subheader('`Year` and `Genre`')
+        desc_cols[0].write('Returns list of possible `User Year`s and `Genre`s for user to select from. `Genre` exists only if they were added in `User Year`.')
+        desc_cols[1].subheader('`Fixed Attribute`')
+        desc_cols[1].write('Returns list of possible attributes for user to select from then prompts user to provide range of possible values for selected attribute.')
     attributes = ['popularity', 'danceability', 'energy', 'loudness', 'acousticness',
             'instrumentalness', 'liveness', 'valence']
     cols_group = st.beta_columns((1,1,1,1))
@@ -1178,7 +1186,15 @@ def project_trends_page(df):
     ##############################################
     st.title('Attribute Correlations Over Time')
     with st.beta_expander('Description...'):
-        st.write('Here is a description of the grpah you are looking at.')
+        desc_cols = st.beta_columns((1,1))
+        desc_cols[0].subheader('`Group`')
+        desc_cols[0].write('Select how to color the data points; `Pairplot` will return pairplot graph')
+        desc_cols[1].subheader('Dimensions')
+        desc_cols[1].write('Determine how many dimensions to include in the graph; third dimension will be `User Year`')
+        desc_cols[0].subheader('Attribute 01')
+        desc_cols[0].write('Select from list of attributes found in previous graphs; will be plotted on x-axis')
+        desc_cols[1].subheader('Attribute 02')
+        desc_cols[1].write('Select from list of attributes found in previous graphs; will be plotted on y-axis')
     cols_group = st.beta_columns((2.4,1.2,1.8,1.8))
     group = cols_group[0].radio(label='Group', options=['Genre', 'Time', 'Pairplot'], key='20:49_0803')
     top_ten_genre = list(df[df['genre'] != 'NA'].groupby('genre').size().sort_values(ascending=False)[:10].index)
