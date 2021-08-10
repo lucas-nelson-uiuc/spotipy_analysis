@@ -1,13 +1,5 @@
-![final Text](https://media.giphy.com/media/wl5eQctHnu3cfe8XQB/giphy.gif)
+![final Text](https://media.giphy.com/media/2Oue37oVLNO32gqHDl/giphy.gif)
 
 # Page Content
 
-## Tracks Highs-and-Lows
-
-Returns grid-like structure of tracks that possess a certain property relative to one another. Categories include: `Longest/Shortest Track`, `Oldest/Youngest Track`, `Track Added Most/Least Recently`, and `Track Added Earliest/Latest in Day`.
-
----
-
-## Attributes Highs-and-Lows
-
-Returns two-column objects: left column contains a description, ranking, and distribution plot of the respective attribute, right column contains the two tracks that hold the highest and lowest score of the respective attribute.
+Returns grid-like structure of various attributes containing a description (how Spotify computes the attribute and a dataframe describing the attribute's distribution) and a gauge (plots the average score of the query and highlights the 25%-75% range).
