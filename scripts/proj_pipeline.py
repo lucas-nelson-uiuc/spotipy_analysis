@@ -37,8 +37,8 @@ class DateMonthError(Error):
 
 class SpotifyUser():
     def __init__(self, client_id, client_secret):
-        self.client_id = client_id
-        self.client_secret = client_secret
+        self.client_id = 'db90a7924baf4b38a9cbb37964f71044'
+        self.client_secret = '27599d5076e74b29b99d0f3e0f1caa92'
 
 
 @st.cache
