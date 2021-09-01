@@ -42,7 +42,7 @@ class SpotifyUser():
 
 
 @st.cache
-def pipeline_single_spotify(spotify_user, playlist_url):
+def pipeline_single_spotify(playlist_url):
     """
     Gather spotify playlist data using user token and playlist url(s)
 
@@ -61,8 +61,8 @@ def pipeline_single_spotify(spotify_user, playlist_url):
     """
 
     auth_manager = SpotifyClientCredentials(
-                        client_id=spotify_user.client_id,
-                        client_secret=spotify_user.client_secret
+                        client_id='db90a7924baf4b38a9cbb37964f71044',
+                        client_secret='27599d5076e74b29b99d0f3e0f1caa92'
                         )
     sp = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -179,7 +179,7 @@ def pipeline_single_spotify(spotify_user, playlist_url):
 
 
 @st.cache
-def pipeline_multip_spotify(spotify_user, playlist_url_string):
+def pipeline_multip_spotify(playlist_url_string):
     """
     Gather spotify playlist data using user token and playlist url(s)
 
@@ -203,7 +203,7 @@ def pipeline_multip_spotify(spotify_user, playlist_url_string):
 
         try:
             playlist_url = playlist_url.strip()
-            playlist_df_list.append(pipeline_single_spotify(spotify_user, playlist_url))
+            playlist_df_list.append(pipeline_single_spotify(playlist_url))
 
         except Exception:
             url_link = playlist_url_string.split(',')
