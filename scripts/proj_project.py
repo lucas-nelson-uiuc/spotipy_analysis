@@ -36,11 +36,11 @@ st.sidebar.title('Spotipy Analysis Dashboard')
 with st.sidebar.beta_expander('Enter Input Data', True):
     client_id = st.text_input(
                                 'Client ID',
-                                '' #enter client_id here
+                                'db90a7924baf4b38a9cbb37964f71044' #enter client_id here
                                 )
     client_secret = st.text_input(
                                 'Client Secret',
-                                '' #enter client_secret here
+                                '27599d5076e74b29b99d0f3e0f1caa92' #enter client_secret here
                                 )
     playlist_input = st.text_area(
                                 'Playlist URL(s)',
