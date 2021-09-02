@@ -35,7 +35,7 @@ To properly utilize the app, please visit the Walkthrough Document located in th
 ## Further Analysis
 This dashboard does not utilize real-time listening data. Statistics such as 'Top Tracks of the Week/Month/Year' are not available through this project.
 
-Luckily, this amazing project covers that half, so please visit this page for a complementary analysis: [Stats for Spotify](https://www.statsforspotify.com/)
+Luckily, the amazing minds behind `Stats for Spotify` have that half covered, so please visit this page for a complementary analysis: [Stats for Spotify](https://www.statsforspotify.com/)
 
 ## Acknowledgements <a name = "acknowledgements"></a>
 
