@@ -3,36 +3,10 @@ Please review this document to properly gather, view, and interact with the data
 
 ### Table of Contents
 
-* [Generating Your Spotify Token](#Generating-Your-Spotify-Token)
 * [Gathering Your Spotify Playlist URLs](#Gathering-Your-Spotify-Playlist-URLs)
 * [Reviewing Your Input Data](#Reviewing-Your-Input-Data)
 * [Your Unique Spotipy Analysis Dashboard](#Your-Unique-Spotipy-Analysis-Dashboard)
 * [Interacting with Plotly Graphs](#Interacting-with-Plotly-Graphs)
-
----
-# Generating Your Spotify Token
-This section will walk you through how to generate a Spotify token by accessing your `CLIENT ID` and `CLIENT SECRET`.
-
-### 01. Spotify Developer Platform
-* Visit [Spotify Developer Platform](https://developer.spotify.com/dashboard/). If you have a Spotify account, select `LOG IN`. If you do not have a Spotify account, select `CREATE AN ACCOUNT`.
-
-![Descriptive Image #01](https://i.imgur.com/xuHd84L.png)
-
-* Once you have entered your Spotify Developer Platform, create an app by either selecting `CREATE AN APP` or clicking on any of the app boxes below.
-
-![Descriptive Image #02](https://i.imgur.com/xWFR5Rf.png)
-
-* Enter any random `name` and `description` for your app. (These will not be used in further steps.) Afterwards, review and agree to the `Terms of Service` then select `CREATE`.
-
-![Descriptive Image #03](https://i.imgur.com/IA7bPoQ.png)
-
-* Copy your `CLIENT ID` and `CLIENT SECRET`.
-
-![Descriptive Image #04](https://i.imgur.com/YMyLGKy.png)
-
-* Finally, paste both into respective fields in `Spotipy Analysis Dashboard`, located in the `Enter Input Data` tab in the sidebar.
-
-![Descriptive Image #05](https://i.imgur.com/FgXRXEs.png)
 
 ---
 # Gathering Your Spotify Playlist URLs
@@ -42,7 +16,7 @@ This section will walk you through how to gather your Spotify playlist URL(s).
 Visit [Spotify](https://open.spotify.com/). If you have a Spotify account, select `LOG IN`. If you do not have a Spotify account, select `CREATE AN ACCOUNT`.
 
 ### 02. Gather Playlist URLs
-Once you have entered Spotify, gather your playlist URLs one-by-one. Since `Spotipy Analysis Dashboard` uses your token to gather the data, you only have access to playlists created under your account and public playlists created by any account.
+Once you have entered Spotify, gather your playlist URLs one-by-one. Since `Spotipy Analysis Dashboard` uses a randomized token to gather the data, you only have access to playlists created under your account and public playlists created by any account.
 
 Your URL should look like this: `https://open.spotify.com/playlist/37i9dQZF1DXe8E8oqpmTDI`
 
@@ -56,13 +30,9 @@ After inserting your playlist URL(s), the text field should look like this:
 ![Descriptive Image 05](https://i.imgur.com/KR49qJj.png)
 
 ### 04. Ready to Go
-After pasting your `CLIENT ID`, `CLIENT SECRET`, and `Playlist URL(s)`, your `Enter Input Data` section should look something similar to this. Note, playlist URLs do not have to be aligned nor have consistent whitespace, **they only need commas separating the URLs**.
+After pasting your `Playlist URL(s)`, your `Enter Input Data` section should look something similar to this. Note, playlist URLs do not have to be aligned nor have consistent whitespace - **there only need be one comma separating each URL**.
 ```
 Enter Input Data
-¦   Client ID
-+---   a0****************************z9
-¦   Client Secret
-+---   b1****************************y8
 ¦   Playlist URL(s)
 +---   https://open.spotify.com/playlist/37i9dQZF1DXe8E8oqpmTDI,
        https://open.spotify.com/playlist/37i9dQZF1DZ06evO0ti1Ik,
