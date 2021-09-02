@@ -225,7 +225,7 @@ def project_welcm_page():
     data_grp = st.beta_columns((1,1,1))
     data_grp[0].markdown("<h3><b>01. How to Access Your Data</b></h3>", unsafe_allow_html=True)
     data_grp[0].markdown('''
-        Data for your dashboard is gathered by generating a Spotify token and providing playlist URLs
+        Data for your dashboard is gathered by providing playlist URLs
 
         Visit the [`Walkthrough Document`](https://github.com/lucas-nelson-uiuc/academia_epidemia/blob/main/spotipy_analysis/WALKTHROUGH_DOCUMENT.md#Interacting-with-Plotly-Graphs)
         to learn how to properly prepare your input data
