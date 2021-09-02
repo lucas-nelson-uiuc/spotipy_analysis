@@ -6,7 +6,7 @@ import calendar
 import proj_pipeline
 
 
-def analysis_search_dataframe(df, client_id, client_secret, song_str='', artist_str='', album_str=''):
+def analysis_search_dataframe(df, song_str='', artist_str='', album_str=''):
     if (song_str == '') & (artist_str == '') & (album_str == ''):
         return st.error('Please search for song/artist/album in data')
     elif (song_str != '') and (artist_str != ''):
