@@ -36,7 +36,7 @@ st.sidebar.title('Spotify Analysis Dashboard')
 with st.sidebar.beta_expander('Enter Input Data', True):
     playlist_input = st.text_area(
         'Playlist URL(s)',
-        '')
+        'https://open.spotify.com/playlist/37i9dQZEVXbLp5XoPON0wI')
     ready_button = st.checkbox('Gather DataFrame')
 
 
