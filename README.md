@@ -11,7 +11,7 @@
  [![GitHub stars](https://badgen.net/github/stars/lucas-nelson-uiuc/spotipy_analysis)](https://GitHub.com/lucas-nelson-uiuc/spotipy_analysis)
  [![GitHub issues](https://badgen.net/github/issues/lucas-nelson-uiuc/spotipy_analysis/)](https://GitHub.com/lucas-nelson-uiuc/spotipy_analysis/issues/)
  [![GitHub pull-requests](https://img.shields.io/github/issues-pr/lucas-nelson-uiuc/spotipy_analysis.svg)](https://GitHub.com/lucas-nelson-uiuc/spotipy_analysis/pull/)
- [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/lucas-nelson-uiuc/spotipy_analysis/graphs/commit-activity)
+ [![Maintenance](https://img.shields.io/badge/Maintained%3F-no-red.svg)](https://GitHub.com/lucas-nelson-uiuc/spotipy_analysis/graphs/commit-activity)
 
 </div>
 
